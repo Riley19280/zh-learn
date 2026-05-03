@@ -2,16 +2,14 @@
 
 namespace App\Enums;
 
-enum AnswerForm: string
-{
-    case Character = 'character';
+enum AnswerForm: string {
+    case Chinese = 'chinese';
     case Pinyin = 'pinyin';
     case English = 'english';
 
-    public function label(): string
-    {
+    public function label(): string {
         return match ($this) {
-            self::Character => 'Character',
+            self::Chinese => 'Chinese',
             self::Pinyin => 'Pinyin',
             self::English => 'English',
         };

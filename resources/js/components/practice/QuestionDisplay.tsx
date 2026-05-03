@@ -11,7 +11,7 @@ export function QuestionDisplay({ word, questionForm }: { word: Word; questionFo
         );
     }
 
-    const isCharacter = questionForm === 'character';
+    const isCharacter = questionForm === 'chinese';
     const clickable = isCharacter && !!word.ttsUrl;
 
     return (

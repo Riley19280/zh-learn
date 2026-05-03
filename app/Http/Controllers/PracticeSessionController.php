@@ -18,15 +18,12 @@ use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class PracticeSessionController extends Controller
-{
-    public function __construct()
-    {
+class PracticeSessionController extends Controller {
+    public function __construct() {
         $this->authorizeResource(PracticeSession::class, 'practiceSession');
     }
 
-    public function store(Request $request): RedirectResponse
-    {
+    public function store(Request $request): RedirectResponse {
         $validated = $request->validate([
             'practice_set_id' => ['required', 'integer', Rule::exists('practice_sets', 'id')],
             'exercise_structure' => ['required', Rule::enum(ExerciseStructure::class)],
@@ -51,80 +48,50 @@ class PracticeSessionController extends Controller
         return redirect()->route('practice.sessions.show', $session);
     }
 
-    public function show(PracticeSession $practiceSession): Response
-    {
+    public function show(PracticeSession $practiceSession): Response {
         $words = [];
         $results = null;
 
         if ($practiceSession->completed_at) {
             $results = $practiceSession->attempts()
-                ->with('word:id,text,pinyin,translation,tts_path')
+                ->with('word')
                 ->orderBy('id')
-                ->get()
-                ->map(fn (PracticeAttempt $a) => [
-                    'wordId' => $a->word_id,
-                    'word' => [
-                        'text' => $a->word->text,
-                        'pinyin' => $a->word->pinyin,
-                        'translation' => $a->word->translation,
-                        'ttsUrl' => $a->word->public_tts_url,
-                    ],
-                    'isCorrect' => $a->is_correct,
-                    'givenAnswer' => $a->given_answer,
-                    'correctAnswer' => $a->correct_answer,
-                    'responseTimeMs' => $a->response_time_ms,
-                ]);
+                ->get();
         } else {
             $words = match ($practiceSession->exercise_structure) {
-                ExerciseStructure::Word => (function () {
+                ExerciseStructure::Word => (function () use ($practiceSession) {
                     return $practiceSession->practiceSet?->words()
                         ->select('words.id', 'text', 'pinyin', 'translation')
                         ->get()
-                        ->map(fn ($w) => [
-                            'id' => $w->id,
-                            'text' => $w->text,
-                            'pinyin' => $w->pinyin,
-                            'translation' => $w->translation,
-                            'ttsUrl' => $w->public_tts_url,
-                        ])
                         ->shuffle()
                         ->values() ?? collect();
                 })(),
                 ExerciseStructure::Sentence => (function () {
-                    $sentences = (new SentenceGenerator)->prompt('go')['sentences'];
+                    $sentences = (new SentenceGenerator())->prompt('go')['sentences'];
 
                     return collect($sentences)
                         ->map(fn ($sentence, $idx) => [
-                            'id' => $idx,
                             'text' => $sentence['chinese'],
                             'pinyin' => $sentence['pinyin'],
                             'translation' => $sentence['english'],
-                            'ttsUrl' => null,
                         ]);
                 })()
             };
         }
 
         return Inertia::render('practice/session', [
-            'session' => [
-                'id' => $practiceSession->id,
-                'exerciseType' => $practiceSession->exercise_type,
-                'questionForm' => $practiceSession->question_form,
-                'answerForm' => $practiceSession->answer_form,
-                'completedAt' => $practiceSession->completed_at,
-            ],
+            'session' => $practiceSession,
             'words' => $words,
             'results' => $results,
         ]);
     }
 
-    public function complete(Request $request, PracticeSession $practiceSession): RedirectResponse
-    {
+    public function complete(Request $request, PracticeSession $practiceSession): RedirectResponse {
         $this->authorize('complete', $practiceSession);
 
         $validated = $request->validate([
             'attempts' => ['required', 'array', 'min:1'],
-            'attempts.*.word_id' => ['required', 'integer', Rule::exists('words', 'id')],
+            'attempts.*.word_id' => ['nullable', 'integer', Rule::exists('words', 'id')],
             'attempts.*.given_answer' => ['nullable', 'string', 'max:1000'],
             'attempts.*.correct_answer' => ['nullable', 'string', 'max:1000'],
             'attempts.*.is_correct' => ['required', 'boolean'],
@@ -137,9 +104,6 @@ class PracticeSessionController extends Controller
                 PracticeAttempt::create([
                     'practice_session_id' => $practiceSession->id,
                     'word_id' => $data['word_id'],
-                    'exercise_type' => $practiceSession->exercise_type,
-                    'question_form' => $practiceSession->question_form,
-                    'answer_form' => $practiceSession->answer_form,
                     'given_answer' => $data['given_answer'] ?? null,
                     'correct_answer' => $data['correct_answer'],
                     'is_correct' => $data['is_correct'],

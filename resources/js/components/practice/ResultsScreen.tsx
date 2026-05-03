@@ -1,16 +1,16 @@
 import { index as practiceIndex } from '@/routes/practice';
-import type { SessionResult } from './types';
+import { PracticeAttempt } from '@/types';
 
-export function ResultsScreen({ results }: { results: SessionResult[] }) {
-    const wordIds = [...new Set(results.map((x) => x.wordId))];
+export function ResultsScreen({ results }: { results: PracticeAttempt[] }) {
+    const wordIds = [...new Set(results.map((x) => x.word_id))];
     const total = wordIds.length;
-    const correct = wordIds.filter((id) => !results.some((r) => r.wordId === id && !r.isCorrect)).length;
+    const correct = wordIds.filter((id) => !results.some((r) => r.word_id === id && !r.is_correct)).length;
     const pct = total > 0 ? Math.round((correct / total) * 100) : 0;
 
     // One entry per word that had at least one incorrect attempt
     const wrong = wordIds
-        .filter((id) => results.some((r) => r.wordId === id && !r.isCorrect))
-        .map((id) => results.find((r) => r.wordId === id)!);
+        .filter((id) => results.some((r) => r.word_id === id && !r.is_correct))
+        .map((id) => results.find((r) => r.word_id === id)!);
 
     const scoreColor =
         pct >= 80
@@ -35,20 +35,20 @@ export function ResultsScreen({ results }: { results: SessionResult[] }) {
                     <h3 className="mb-2 text-sm font-medium text-muted-foreground">Needs review</h3>
                     <div className="divide-y rounded-lg border">
                         {wrong.map((r) => (
-                            <div key={r.wordId} className="flex items-center gap-4 px-4 py-3">
+                            <div key={r.word_id} className="flex items-center gap-4 px-4 py-3">
                                 <span
-                                    className={`w-14 shrink-0 text-xl font-bold ${r.word.ttsUrl ? 'cursor-pointer' : ''}`}
-                                    onClick={() => r.word.ttsUrl && new Audio(r.word.ttsUrl).play()}
+                                    className={`w-14 shrink-0 text-xl font-bold ${r.word?.ttsUrl ? 'cursor-pointer' : ''}`}
+                                    onClick={() => r.word?.ttsUrl && new Audio(r.word.ttsUrl).play()}
                                 >
-                                    {r.word.text}
+                                    {r.word?.text}
                                 </span>
-                                <span className="w-24 shrink-0 text-sm text-muted-foreground">{r.word.pinyin}</span>
-                                <span className="min-w-0 flex-1 truncate text-sm">{r.word.translation}</span>
+                                <span className="w-24 shrink-0 text-sm text-muted-foreground">{r.word?.pinyin}</span>
+                                <span className="min-w-0 flex-1 truncate text-sm">{r.word?.translation}</span>
                                 <div className="text-right text-sm">
-                                    {r.givenAnswer && (
-                                        <p className="text-red-500 line-through">{r.givenAnswer}</p>
+                                    {r.given_answer && (
+                                        <p className="text-red-500 line-through">{r.given_answer}</p>
                                     )}
-                                    <p className="font-medium">{r.correctAnswer}</p>
+                                    <p className="font-medium">{r.correct_answer}</p>
                                 </div>
                             </div>
                         ))}

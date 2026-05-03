@@ -1,7 +1,7 @@
-import type { Word } from '@/types';
+import type { PracticeSession, Word } from '@/types';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { getCorrectAnswer, getQuestionText } from './helpers';
-import type { LocalAttempt, Session } from './types';
+import type { LocalAttempt } from './types';
 
 const MATCH_BATCH_SIZE = 6
 
@@ -11,7 +11,7 @@ function MatchingBatch({
     onAnswer,
 }: {
     words: Word[];
-    session: Session;
+    session: PracticeSession;
     onAnswer: (attempt: LocalAttempt) => void;
 }) {
     const [leftWordId, setLeftWordId] = useState<number | null>(null);
@@ -36,7 +36,7 @@ function MatchingBatch({
 
         const word = words.find((w) => w.id === wordId);
 
-        if (word && session.questionForm === 'audio' && word.ttsUrl) {
+        if (word && session.question_form === 'audio' && word.ttsUrl) {
             new Audio(word.ttsUrl).play();
         }
     }
@@ -67,12 +67,12 @@ function MatchingBatch({
 
         const attempt: LocalAttempt = {
             word_id: leftWord.id,
-            given_answer: getCorrectAnswer(leftWord, session.answerForm),
-            correct_answer: getCorrectAnswer(rightWord, session.answerForm),
+            given_answer: getCorrectAnswer(leftWord, session.answer_form),
+            correct_answer: getCorrectAnswer(rightWord, session.answer_form),
             is_correct: correct,
             response_time_ms: responseTime,
             options: rightItems.map((r) =>
-                getCorrectAnswer(r, session.answerForm),
+                getCorrectAnswer(r, session.answer_form),
             ),
         };
         onAnswerRef.current(attempt);
@@ -130,7 +130,7 @@ function MatchingBatch({
     return (
         <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-2">
-                <p className={labelClass}>{session.questionForm}</p>
+                <p className={labelClass}>{session.question_form}</p>
                 {words.map((word) => (
                     <button
                         key={word.id}
@@ -139,12 +139,12 @@ function MatchingBatch({
                         disabled={matched.has(word.id)}
                         className={`cursor-pointer rounded-lg border-2 px-4 py-3 text-left text-lg font-medium transition-all ${leftItemClass(word)}`}
                     >
-                        {getQuestionText(word, session.questionForm)}
+                        {getQuestionText(word, session.question_form)}
                     </button>
                 ))}
             </div>
             <div className="flex flex-col gap-2">
-                <p className={labelClass}>{session.answerForm}</p>
+                <p className={labelClass}>{session.answer_form}</p>
                 {rightItems.map((word) => (
                     <button
                         key={word.id}
@@ -153,7 +153,7 @@ function MatchingBatch({
                         disabled={matched.has(word.id) || !leftWordId}
                         className={`rounded-lg border-2 px-4 py-3 text-left text-lg font-medium transition-all ${rightItemClass(word)}`}
                     >
-                        {getCorrectAnswer(word, session.answerForm)}
+                        {getCorrectAnswer(word, session.answer_form)}
                     </button>
                 ))}
             </div>
@@ -167,7 +167,7 @@ export function MatchingExercise({
     onAnswer,
 }: {
     words: Word[];
-    session: Session;
+    session: PracticeSession;
     onAnswer: (attempt: LocalAttempt) => void;
 }) {
     const [batchStart, setBatchStart] = useState(0);

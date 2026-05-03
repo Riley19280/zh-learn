@@ -6,15 +6,15 @@ import { MatchingExercise } from '@/components/practice/MatchingExercise';
 import { MultipleChoiceExercise } from '@/components/practice/MultipleChoiceExercise';
 import { ResultsScreen } from '@/components/practice/ResultsScreen';
 import { TypingExercise } from '@/components/practice/TypingExercise';
-import type { LocalAttempt, Session, SessionResult } from '@/components/practice/types';
+import type { LocalAttempt } from '@/components/practice/types';
 import { index as practiceIndex } from '@/routes/practice';
 import { complete as completeRoute } from '@/routes/practice/sessions/index';
-import type { Word } from '@/types';
+import type { PracticeAttempt, PracticeSession, Word } from '@/types';
 
 interface Props {
-    session: Session;
+    session: PracticeSession;
     words: Word[];
-    results: SessionResult[] | null;
+    results: PracticeAttempt[] | null;
     [key: string]: unknown;
 }
 
@@ -26,7 +26,7 @@ export default function PracticeSession() {
     const [feedbackAttempt, setFeedbackAttempt] = useState<LocalAttempt | null>(null);
     const [processing, setProcessing] = useState(false);
 
-    const isMatching = session.exerciseType === 'matching';
+    const isMatching = session.exercise_type === 'matching';
     const totalWords = words.length;
     const completedCount =  isMatching ? pendingAttempts.filter(attempt => attempt.is_correct).length : wordIndex;
 
@@ -70,7 +70,7 @@ export default function PracticeSession() {
         }
     }, [wordIndex, totalWords, finishSession, pendingAttempts]);
 
-    if (session.completedAt && results) {
+    if (session.completed_at && results) {
         return (
             <>
                 <Head title="Results" />
@@ -132,7 +132,7 @@ export default function PracticeSession() {
                     >
                         <Card>
                             <CardContent className="p-6">
-                                {session.exerciseType === 'multiple_choice' && (
+                                {session.exercise_type === 'multiple_choice' && (
                                     <MultipleChoiceExercise
                                         key={wordIndex}
                                         word={words[wordIndex]}
@@ -141,7 +141,7 @@ export default function PracticeSession() {
                                         onAnswer={handleAnswer}
                                     />
                                 )}
-                                {session.exerciseType === 'typing' && (
+                                {session.exercise_type === 'typing' && (
                                     <TypingExercise
                                         key={wordIndex}
                                         word={words[wordIndex]}
@@ -149,7 +149,7 @@ export default function PracticeSession() {
                                         onAnswer={handleAnswer}
                                     />
                                 )}
-                                {session.exerciseType === 'matching' && (
+                                {session.exercise_type === 'matching' && (
                                     <MatchingExercise
                                         words={words}
                                         session={session}

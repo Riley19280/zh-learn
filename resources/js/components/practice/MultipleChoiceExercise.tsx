@@ -1,8 +1,8 @@
-import type { Word } from '@/types';
+import type { PracticeSession, Word } from '@/types';
 import { useMemo, useRef, useState } from 'react';
 import { generateMCOptions, getCorrectAnswer } from './helpers';
 import { QuestionDisplay } from './QuestionDisplay';
-import type { LocalAttempt, Session } from './types';
+import type { LocalAttempt } from './types';
 
 export function MultipleChoiceExercise({
     word,
@@ -12,19 +12,19 @@ export function MultipleChoiceExercise({
 }: {
     word: Word;
     allWords: Word[];
-    session: Session;
+    session: PracticeSession;
     onAnswer: (attempt: LocalAttempt) => void;
 }) {
     const [selected, setSelected] = useState<string | null>(null);
     const startTime = useRef(Date.now());
 
     const options = useMemo(
-        () => generateMCOptions(word, allWords, session.answerForm),
+        () => generateMCOptions(word, allWords, session.answer_form),
         // eslint-disable-next-line react-hooks/exhaustive-deps
         [word.id],
     );
 
-    const correctAnswer = getCorrectAnswer(word, session.answerForm);
+    const correctAnswer = getCorrectAnswer(word, session.answer_form);
 
     function handleSelect(option: string) {
         if (selected !== null) return;
@@ -41,7 +41,7 @@ export function MultipleChoiceExercise({
 
     return (
         <div className="flex flex-col gap-6">
-            <QuestionDisplay word={word} questionForm={session.questionForm} />
+            <QuestionDisplay word={word} questionForm={session.question_form} />
             <div className="grid grid-cols-2 gap-3">
                 {options.map((opt) => {
                     const isCorrect = opt === correctAnswer;

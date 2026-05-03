@@ -37,4 +37,10 @@ class PracticeSession extends Model
     {
         return $this->hasMany(PracticeAttempt::class);
     }
+
+
+    public function correctAttempts(): HasMany
+    {
+        return $this->hasMany(PracticeAttempt::class)->where('is_correct', true);
+    }
 }

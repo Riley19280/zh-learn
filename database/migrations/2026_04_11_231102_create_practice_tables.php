@@ -30,6 +30,10 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->foreignId('practice_set_id')->nullable()->constrained()->nullOnDelete();
             $table->timestamp('completed_at')->nullable();
+            $table->string('exercise_structure')->nullable();
+            $table->string('exercise_type');
+            $table->string('question_form');
+            $table->string('answer_form');
             $table->timestamps();
 
             $table->index(['user_id', 'created_at']);
@@ -40,11 +44,11 @@ return new class extends Migration
         Schema::create('practice_attempts', function (Blueprint $table) {
             $table->id();
             $table->foreignId('practice_session_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('word_id')->constrained()->cascadeOnDelete();
-            $table->string('exercise_type');
-            $table->text('given_answer')->nullable();  // what the user submitted
+            $table->foreignId('word_id')->nullable()->constrained()->cascadeOnDelete();
             $table->text('correct_answer');            // expected answer at time of attempt
+            $table->text('given_answer')->nullable();  // what the user submitted
             $table->boolean('is_correct');
+            $table->json('options')->nullable()->after('answer_form'); // choices shown for multiple_choice/matching
             $table->unsignedInteger('response_time_ms')->nullable(); // time from prompt to submission
             $table->timestamps();
 

@@ -1,108 +1,89 @@
 import js from '@eslint/js';
 import stylistic from '@stylistic/eslint-plugin';
-import prettier from 'eslint-config-prettier/flat';
 import importPlugin from 'eslint-plugin-import';
-import react from 'eslint-plugin-react';
+import importNewlinesPlugin from 'eslint-plugin-import-newlines';
 import reactHooks from 'eslint-plugin-react-hooks';
 import globals from 'globals';
 import typescript from 'typescript-eslint';
 
-const controlStatements = [
-    'if',
-    'return',
-    'for',
-    'while',
-    'do',
-    'switch',
-    'try',
-    'throw',
-];
-const paddingAroundControl = [
-    ...controlStatements.flatMap((stmt) => [
-        { blankLine: 'always', prev: '*', next: stmt },
-        { blankLine: 'always', prev: stmt, next: '*' },
-    ]),
-];
-
 /** @type {import('eslint').Linter.Config[]} */
 export default [
     js.configs.recommended,
-    reactHooks.configs.flat['recommended-latest'],
     ...typescript.configs.recommended,
+    importPlugin.flatConfigs.recommended,
+    stylistic.configs.recommended,
     {
-        ...react.configs.flat.recommended,
-        ...react.configs.flat['jsx-runtime'], // Required for React 17+
         languageOptions: {
             globals: {
                 ...globals.browser,
             },
         },
         rules: {
-            'react/react-in-jsx-scope': 'off',
-            'react/prop-types': 'off',
-            'react/no-unescaped-entities': 'off',
+            '@stylistic/react-in-jsx-scope': 'off',
+            '@stylistic/prop-types': 'off',
+            '@stylistic/no-unescaped-entities': 'off',
+            '@stylistic/comma-dangle': [
+                'error',
+                {
+                    arrays: 'always-multiline',
+                    objects: 'always-multiline',
+                    imports: 'always-multiline',
+                    exports: 'always-multiline',
+                    functions: 'always-multiline',
+                    importAttributes: 'always-multiline',
+                    dynamicImports: 'always-multiline',
+                },
+            ],
+            '@stylistic/semi': 'error',
+            '@stylistic/brace-style': ['error', '1tbs'],
         },
         settings: {
             react: {
                 version: 'detect',
             },
+            'import/resolver': {
+                typescript: true,
+                node: true,
+            },
         },
     },
     {
         plugins: {
-            import: importPlugin,
-        },
-        settings: {
-            'import/resolver': {
-                typescript: {
-                    alwaysTryTypes: true,
-                    project: './tsconfig.json',
-                },
-                node: true,
-            },
+            'react-hooks': reactHooks,
+            'import-newlines': importNewlinesPlugin,
+            '@stylistic': stylistic,
         },
         rules: {
+            'react-hooks/rules-of-hooks': 'error',
+            'react-hooks/exhaustive-deps': 'warn',
+            'jsx-quotes': ['error', 'prefer-double'],
+            '@typescript-eslint/no-unused-vars': [
+                'warn',
+                {
+                    argsIgnorePattern: '^_',
+                    varsIgnorePattern: '^_',
+                },
+            ],
             '@typescript-eslint/no-explicit-any': 'off',
-            '@typescript-eslint/consistent-type-imports': [
+            'no-shadow': 'error',
+            'max-len': 'off',
+            'import-newlines/enforce': [
                 'error',
                 {
-                    prefer: 'type-imports',
-                    fixStyle: 'separate-type-imports',
+                    items: 0,
                 },
             ],
             'import/order': [
                 'error',
                 {
-                    groups: [
-                        'builtin',
-                        'external',
-                        'internal',
-                        'parent',
-                        'sibling',
-                        'index',
-                    ],
                     alphabetize: {
                         order: 'asc',
                         caseInsensitive: true,
                     },
                 },
             ],
-            'import/consistent-type-specifier-style': [
-                'error',
-                'prefer-top-level',
-            ],
-        },
-    },
-    {
-        plugins: {
-            '@stylistic': stylistic,
-        },
-        rules: {
-            '@stylistic/brace-style': ['error', '1tbs', { allowSingleLine: false }],
-            '@stylistic/padding-line-between-statements': [
-                'error',
-                ...paddingAroundControl,
-            ],
+            'import/first': 'error',
+            'import/no-unresolved': 'off',
         },
     },
     {
@@ -112,21 +93,7 @@ export default [
             'public',
             'bootstrap/ssr',
             'tailwind.config.js',
-            'vite.config.ts',
-            'resources/js/actions/**',
-            'resources/js/components/ui/*',
-            'resources/js/routes/**',
-            'resources/js/wayfinder/**',
+            '.venv',
         ],
-    },
-    prettier, // Turn off all rules that might conflict with Prettier
-    {
-        plugins: {
-            '@stylistic': stylistic,
-        },
-        rules: {
-            curly: ['error', 'all'],
-            '@stylistic/brace-style': ['error', '1tbs', { allowSingleLine: false }],
-        },
     },
 ];

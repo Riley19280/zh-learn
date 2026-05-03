@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { Input } from '@/components/ui/input';
-import type { Word } from '@/types';
+import type { PracticeSession, Word } from '@/types';
 import { checkAnswer, getCorrectAnswer } from './helpers';
 import { QuestionDisplay } from './QuestionDisplay';
-import type { LocalAttempt, Session } from './types';
+import type { LocalAttempt } from './types';
 
 export function TypingExercise({
     word,
@@ -11,7 +11,7 @@ export function TypingExercise({
     onAnswer,
 }: {
     word: Word;
-    session: Session;
+    session: PracticeSession;
     onAnswer: (attempt: LocalAttempt) => void;
 }) {
     const [input, setInput] = useState('');
@@ -23,7 +23,7 @@ export function TypingExercise({
         inputRef.current?.focus();
     }, []);
 
-    const correctAnswer = getCorrectAnswer(word, session.answerForm);
+    const correctAnswer = getCorrectAnswer(word, session.answer_form);
 
     function check() {
         if (submitted || !input.trim()) {
@@ -31,7 +31,7 @@ export function TypingExercise({
         }
 
         setSubmitted(true);
-        const isCorrect = checkAnswer(input, correctAnswer, session.answerForm);
+        const isCorrect = checkAnswer(input, correctAnswer, session.answer_form);
         const attempt = {
             word_id: word.id,
             given_answer: input,
@@ -44,15 +44,15 @@ export function TypingExercise({
     }
 
     const placeholder =
-        session.answerForm === 'character'
-            ? 'Type the character…'
-            : session.answerForm === 'pinyin'
+        session.answer_form === 'chinese'
+            ? 'Type the Chinese…'
+            : session.answer_form === 'pinyin'
               ? 'Type the pinyin…'
               : 'Type the English…';
 
     return (
         <div className="flex flex-col gap-6">
-            <QuestionDisplay word={word} questionForm={session.questionForm} />
+            <QuestionDisplay word={word} questionForm={session.question_form} />
             <div className="flex flex-col gap-3">
                 <Input
                     ref={inputRef}
