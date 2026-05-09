@@ -5,54 +5,56 @@
 (function () {
   function tryParseJSON(text) {
     try {
-      return JSON.parse(text);
+      return JSON.parse(text)
     } catch {
-      return text;
+      return text
     }
   }
 
   function headersToObject(headers) {
-    const obj = {};
+    const obj = {}
     if (headers && typeof headers.forEach === 'function') {
-      headers.forEach((value, key) => { obj[key] = value; });
+      headers.forEach((value, key) => {
+        obj[key] = value
+      })
     } else if (headers && typeof headers === 'object') {
-      Object.assign(obj, headers);
+      Object.assign(obj, headers)
     }
-    return obj;
+    return obj
   }
 
   function emit(type, data) {
-    window.postMessage({ type, data }, '*');
+    window.postMessage({ type, data }, '*')
   }
 
   // ---- Fetch override ----
-  const _fetch = window.fetch;
+  const _fetch = window.fetch
   window.fetch = async function (...args) {
-    const input = args[0];
-    const init = args[1] || {};
+    const input = args[0]
+    const init = args[1] || {}
 
-    const url = input instanceof Request ? input.url : String(input);
-    const method = (init.method || (input instanceof Request ? input.method : 'GET')).toUpperCase();
-    const requestHeaders = headersToObject(init.headers || (input instanceof Request ? input.headers : {}));
+    const url = input instanceof Request ? input.url : String(input)
+    const method = (init.method || (input instanceof Request ? input.method : 'GET')).toUpperCase()
+    const requestHeaders = headersToObject(init.headers || (input instanceof Request ? input.headers : {}))
 
-    let requestBody = null;
+    let requestBody = null
     if (init.body) {
       requestBody = tryParseJSON(
-        typeof init.body === 'string' ? init.body : '[non-string body]'
-      );
+        typeof init.body === 'string' ? init.body : '[non-string body]',
+      )
     }
 
-    const timestamp = new Date().toISOString();
-    let response;
+    const timestamp = new Date().toISOString()
+    let response
 
     try {
-      response = await _fetch.apply(this, args);
+      response = await _fetch.apply(this, args)
     } catch (err) {
       emit('FETCH_CAPTURED', {
         url, method, requestHeaders, requestBody,
-        error: err.message, timestamp
-      });
-      throw err;
+        error: err.message, timestamp,
+      })
+      throw err
     }
 
     // Clone before reading so the caller still gets a usable response
@@ -66,30 +68,30 @@
         responseStatusText: response.statusText,
         responseHeaders: headersToObject(response.headers),
         responseBody: tryParseJSON(text),
-        timestamp
-      });
+        timestamp,
+      })
     }).catch(() => {
       emit('FETCH_CAPTURED', {
         url, method, requestHeaders, requestBody,
-        responseStatus: response.status, timestamp
-      });
-    });
+        responseStatus: response.status, timestamp,
+      })
+    })
 
-    return response;
-  };
+    return response
+  }
 
   // ---- XMLHttpRequest override ----
-  const _XHR = window.XMLHttpRequest;
+  const _XHR = window.XMLHttpRequest
 
   class ScraperXHR extends _XHR {
     constructor() {
-      super();
-      this._scraper = { method: 'GET', url: '', body: null };
+      super()
+      this._scraper = { method: 'GET', url: '', body: null }
 
       this.addEventListener('load', () => {
-        let responseBody = null;
+        let responseBody = null
         try {
-          responseBody = tryParseJSON(this.responseText);
+          responseBody = tryParseJSON(this.responseText)
         } catch { /* binary or non-text */ }
 
         emit('XHR_CAPTURED', {
@@ -99,25 +101,25 @@
           responseStatus: this.status,
           responseStatusText: this.statusText,
           responseBody,
-          timestamp: new Date().toISOString()
-        });
-      });
+          timestamp: new Date().toISOString(),
+        })
+      })
     }
 
     open(method, url, ...rest) {
-      this._scraper.method = (method || 'GET').toUpperCase();
-      this._scraper.url = String(url);
-      return super.open(method, url, ...rest);
+      this._scraper.method = (method || 'GET').toUpperCase()
+      this._scraper.url = String(url)
+      return super.open(method, url, ...rest)
     }
 
     send(body) {
       if (body) {
-        this._scraper.body =
-          typeof body === 'string' ? tryParseJSON(body) : '[non-string body]';
+        this._scraper.body
+          = typeof body === 'string' ? tryParseJSON(body) : '[non-string body]'
       }
-      return super.send(body);
+      return super.send(body)
     }
   }
 
-  window.XMLHttpRequest = ScraperXHR;
-})();
+  window.XMLHttpRequest = ScraperXHR
+})()
