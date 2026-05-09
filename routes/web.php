@@ -26,21 +26,22 @@ Route::get('tts/{filename}', function (string $filename) {
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', DashboardController::class)->name('dashboard');
     Route::get('characters/{character}', [CharacterController::class, 'show'])->name('characters.show');
-    Route::resource('practice', PracticeController::class)->only(['index']);
-    Route::resource('practice/sessions', PracticeSessionController::class)
-        ->only(['store', 'show'])
-        ->names('practice.sessions')
-        ->parameters(['sessions' => 'practiceSession']);
-    Route::post('practice/sessions/{practiceSession}/complete', [PracticeSessionController::class, 'complete'])
-        ->name('practice.sessions.complete')
-        ->middleware('auth');
-    Route::post('practice/sessions/{practiceSession}/check-answer', [PracticeSessionController::class, 'checkAnswer'])
-        ->name('practice.sessions.check-answer')
-        ->middleware('auth');
-    Route::resource('practice/sets', PracticeSetController::class)
-        ->only(['create', 'store', 'edit', 'update', 'destroy'])
-        ->names('practice.sets')
-        ->parameters(['sets' => 'practiceSet']);
+    Route::middleware('throttle:practice')->group(function () {
+        Route::resource('practice', PracticeController::class)->only(['index']);
+        Route::resource('practice/sessions', PracticeSessionController::class)
+            ->only(['store', 'show'])
+            ->names('practice.sessions')
+            ->parameters(['sessions' => 'practiceSession']);
+        Route::post('practice/sessions/{practiceSession}/complete', [PracticeSessionController::class, 'complete'])
+            ->name('practice.sessions.complete');
+        Route::post('practice/sessions/{practiceSession}/check-answer', [PracticeSessionController::class, 'checkAnswer'])
+            ->name('practice.sessions.check-answer')
+            ->middleware('throttle:practice.check-answer');
+        Route::resource('practice/sets', PracticeSetController::class)
+            ->only(['create', 'store', 'edit', 'update', 'destroy'])
+            ->names('practice.sets')
+            ->parameters(['sets' => 'practiceSet']);
+    });
 
     Route::resource('sections', SectionController::class)
         ->only(['index', 'show', 'update']);
