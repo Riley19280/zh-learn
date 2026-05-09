@@ -1,6 +1,7 @@
 import {
   Form,
   Head,
+  usePage,
 } from '@inertiajs/react'
 import InputError from '@/components/input-error'
 import PasswordInput from '@/components/password-input'
@@ -15,6 +16,13 @@ import {
   Label,
 } from '@/components/ui/label'
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import {
   Spinner,
 } from '@/components/ui/spinner'
 import {
@@ -23,8 +31,18 @@ import {
 import {
   store,
 } from '@/routes/register'
+import {
+  Section,
+} from '@/types'
+
+interface Props {
+  sections: Section[]
+  [key: string]: unknown
+}
 
 export default function Register() {
+  const { sections } = usePage<Props>().props
+
   return (
     <>
       <Head title="Register" />
@@ -70,11 +88,28 @@ export default function Register() {
               </div>
 
               <div className="grid gap-2">
+                <Label htmlFor="section_id">Current section</Label>
+                <Select name="section_id" required>
+                  <SelectTrigger id="section_id" tabIndex={3} className="w-full">
+                    <SelectValue placeholder="Select your unit and section" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {sections.map(s => (
+                      <SelectItem key={s.id} value={String(s.id)}>
+                        {s.title}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <InputError message={errors.section_id} />
+              </div>
+
+              <div className="grid gap-2">
                 <Label htmlFor="password">Password</Label>
                 <PasswordInput
                   id="password"
                   required
-                  tabIndex={3}
+                  tabIndex={4}
                   autoComplete="new-password"
                   name="password"
                   placeholder="Password"
@@ -89,7 +124,7 @@ export default function Register() {
                 <PasswordInput
                   id="password_confirmation"
                   required
-                  tabIndex={4}
+                  tabIndex={5}
                   autoComplete="new-password"
                   name="password_confirmation"
                   placeholder="Confirm password"
@@ -102,7 +137,7 @@ export default function Register() {
               <Button
                 type="submit"
                 className="mt-2 w-full"
-                tabIndex={5}
+                tabIndex={6}
                 data-test="register-user-button"
               >
                 {processing && <Spinner />}
@@ -113,7 +148,7 @@ export default function Register() {
             <div className="text-center text-sm text-muted-foreground">
               Already have an account?
               {' '}
-              <TextLink href={login()} tabIndex={6}>
+              <TextLink href={login()} tabIndex={7}>
                 Log in
               </TextLink>
             </div>
