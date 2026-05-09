@@ -4,7 +4,6 @@ namespace App\Console\Commands;
 
 use App\Library\DuolingoImporter;
 use App\Library\VocabularyStats;
-use App\Models\User;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
@@ -29,14 +28,6 @@ class ImportDuolingoDataCommand extends Command {
             return self::SUCCESS;
         }
 
-        $user = User::first();
-
-        if (!$user) {
-            $this->error('No users found — run the user seeder first.');
-
-            return self::FAILURE;
-        }
-
         $this->info('Found ' . count($files) . ' file(s). Importing…');
         $this->newLine();
 
@@ -57,12 +48,9 @@ class ImportDuolingoDataCommand extends Command {
             $this->line('  Processing <fg=cyan>' . basename($file) . '</> (' . count($objects) . ' object(s))');
 
             foreach ($objects as $object) {
-                $importer->processResponseBody($object, $user);
+                $importer->processResponseBody($object);
             }
         }
-
-        $this->line('  Syncing section unlocks…');
-        $importer->syncSectionUnlocks($user);
 
         $summary = $stats->summary();
 

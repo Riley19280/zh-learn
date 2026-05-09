@@ -15,8 +15,8 @@ class DuolingoImporter {
     /**
      * Process a single decoded response body object.
      */
-    public function processResponseBody(array $data, User $user): void {
-        DB::transaction(function () use ($data, $user) {
+    public function processResponseBody(array $data): void {
+        DB::transaction(function () use ($data) {
             foreach (Arr::get($data, 'sections', []) as $sectionData) {
                 $section = $this->upsertSection($sectionData);
 
@@ -25,11 +25,6 @@ class DuolingoImporter {
                 foreach (Arr::get($sectionData, 'words', []) as $wordData) {
                     $word = $this->upsertWord($wordData);
                     $wordIds[] = $word->id;
-
-                    UserWord::updateOrCreate(
-                        ['user_id' => $user->id, 'word_id' => $word->id],
-                        ['is_available' => Arr::get($wordData, 'state') === 'AVAILABLE'],
-                    );
                 }
 
                 $section->words()->syncWithoutDetaching($wordIds);

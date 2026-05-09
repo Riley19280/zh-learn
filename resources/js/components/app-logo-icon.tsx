@@ -4,12 +4,43 @@ import type {
 
 export default function AppLogoIcon(props: SVGAttributes<SVGElement>) {
   return (
-    <svg {...props} viewBox="0 0 40 42" xmlns="http://www.w3.org/2000/svg">
-      <path
-        fillRule="evenodd"
-        clipRule="evenodd"
-        d="M17.2 5.63325L8.6 0.855469L0 5.63325V32.1434L16.2 41.1434L32.4 32.1434V23.699L40 19.4767V9.85547L31.4 5.07769L22.8 9.85547V18.2999L17.2 21.411V5.63325ZM38 18.2999L32.4 21.411V15.2545L38 12.1434V18.2999ZM36.9409 10.4439L31.4 13.5221L25.8591 10.4439L31.4 7.36561L36.9409 10.4439ZM24.8 18.2999V12.1434L30.4 15.2545V21.411L24.8 18.2999ZM23.8 20.0323L29.3409 23.1105L16.2 30.411L10.6591 27.3328L23.8 20.0323ZM7.6 27.9212L15.2 32.1434V38.2999L2 30.9666V7.92116L7.6 11.0323V27.9212ZM8.6 9.29991L3.05913 6.22165L8.6 3.14339L14.1409 6.22165L8.6 9.29991ZM30.4 24.8101L17.2 32.1434V38.2999L30.4 30.9666V24.8101ZM9.6 11.0323L15.2 7.92117V22.5221L9.6 25.6333V11.0323Z"
-      />
-    </svg>
+      <svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+              <linearGradient id="grad" x1="80" y1="80" x2="432" y2="432" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#38BDF8"/>
+                  <stop offset="1" stop-color="#8B5CF6"/>
+              </linearGradient>
+          </defs>
+
+          <g
+              stroke="url(#grad)"
+              stroke-width="30"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+          >
+              <path d="M96 140H240L120 372H264" />
+
+              <path d="M264 372H312" />
+
+              <path d="M312 140V372" />
+              <path d="M416 140V372" />
+              <path d="M312 256H416" />
+          </g>
+
+          <g fill="#7C4DFF">
+              <circle cx="96" cy="140" r="10"/>
+              <circle cx="240" cy="140" r="10"/>
+              <circle cx="120" cy="372" r="10"/>
+              <circle cx="264" cy="372" r="10"/>
+
+              <circle cx="312" cy="372" r="10"/>
+
+              <circle cx="312" cy="140" r="10"/>
+              <circle cx="416" cy="140" r="10"/>
+              <circle cx="312" cy="256" r="10"/>
+              <circle cx="416" cy="256" r="10"/>
+              <circle cx="416" cy="372" r="10"/>
+          </g>
+      </svg>
   )
 }

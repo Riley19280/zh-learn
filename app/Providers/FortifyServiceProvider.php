@@ -14,6 +14,7 @@ use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
 use Laravel\Fortify\Fortify;
+use Native\Mobile\Facades\System;
 
 class FortifyServiceProvider extends ServiceProvider {
     /**
@@ -45,12 +46,14 @@ class FortifyServiceProvider extends ServiceProvider {
      */
     private function configureViews(): void {
         Fortify::loginView(function (Request $request) {
-            $user = User::first();
+            if (System::isMobile()) {
+                $user = User::first();
 
-            if ($user) {
-                Auth::login($user);
+                if ($user) {
+                    Auth::login($user);
 
-                return redirect()->route('dashboard');
+                    return redirect()->route('dashboard');
+                }
             }
 
             return Inertia::render('auth/login', [
