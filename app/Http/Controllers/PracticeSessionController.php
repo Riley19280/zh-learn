@@ -3,18 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Ai\Agents\SentenceGenerator;
-use App\Enums\AnswerForm;
 use App\Enums\ExerciseStructure;
-use App\Enums\ExerciseType;
-use App\Enums\QuestionForm;
+use App\Http\Requests\Practice\CompletePracticeSessionRequest;
+use App\Http\Requests\Practice\StorePracticeSessionRequest;
 use App\Models\PracticeAttempt;
 use App\Models\PracticeSession;
 use App\Models\PracticeSet;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -23,18 +20,10 @@ class PracticeSessionController extends Controller {
         $this->authorizeResource(PracticeSession::class, 'practiceSession');
     }
 
-    public function store(Request $request): RedirectResponse {
-        $validated = $request->validate([
-            'practice_set_id' => ['required', 'integer', Rule::exists('practice_sets', 'id')],
-            'exercise_structure' => ['required', Rule::enum(ExerciseStructure::class)],
-            'exercise_type' => ['required', Rule::enum(ExerciseType::class)],
-            'question_form' => ['required', Rule::enum(QuestionForm::class)],
-            'answer_form' => ['required', Rule::enum(AnswerForm::class)],
-        ]);
+    public function store(StorePracticeSessionRequest $request): RedirectResponse {
+        $validated = $request->validated();
 
-        $set = PracticeSet::where('id', $validated['practice_set_id'])
-            ->where('user_id', Auth::user()->id)
-            ->firstOrFail();
+        $set = PracticeSet::findOrFail($validated['practice_set_id']);
 
         $session = PracticeSession::create([
             'user_id' => Auth::user()->id,
@@ -86,18 +75,10 @@ class PracticeSessionController extends Controller {
         ]);
     }
 
-    public function complete(Request $request, PracticeSession $practiceSession): RedirectResponse {
+    public function complete(CompletePracticeSessionRequest $request, PracticeSession $practiceSession): RedirectResponse {
         $this->authorize('complete', $practiceSession);
 
-        $validated = $request->validate([
-            'attempts' => ['required', 'array', 'min:1'],
-            'attempts.*.word_id' => ['nullable', 'integer', Rule::exists('words', 'id')],
-            'attempts.*.given_answer' => ['nullable', 'string', 'max:1000'],
-            'attempts.*.correct_answer' => ['nullable', 'string', 'max:1000'],
-            'attempts.*.is_correct' => ['required', 'boolean'],
-            'attempts.*.response_time_ms' => ['nullable', 'integer', 'min:0'],
-            'attempts.*.options' => ['nullable', 'array'],
-        ]);
+        $validated = $request->validated();
 
         DB::transaction(function () use ($practiceSession, $validated): void {
             foreach ($validated['attempts'] as $data) {
