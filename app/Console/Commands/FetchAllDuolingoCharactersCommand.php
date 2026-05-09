@@ -13,11 +13,9 @@ use Illuminate\Support\Facades\File;
 
 #[Signature('duolingo:fetch-characters')]
 #[Description('Recursively fetch and process character data from the Duolingo API until all characters have stroke data')]
-class FetchAllDuolingoCharactersCommand extends Command
-{
-    public function handle(DuolingoApi $api, DuolingoImporter $importer): int
-    {
-        if (! $api->isConfigured()) {
+class FetchAllDuolingoCharactersCommand extends Command {
+    public function handle(DuolingoApi $api, DuolingoImporter $importer): int {
+        if (!$api->isConfigured()) {
             $this->error('DUOLINGO_JWT and DUOLINGO_ALPHABETS_KEY must be set in your .env file.');
 
             return self::FAILURE;
@@ -25,7 +23,7 @@ class FetchAllDuolingoCharactersCommand extends Command
 
         $user = User::first();
 
-        if (! $user) {
+        if (!$user) {
             $this->error('No users found — run the user seeder first.');
 
             return self::FAILURE;
@@ -37,7 +35,7 @@ class FetchAllDuolingoCharactersCommand extends Command
 
         do {
             $characters = Character::all()->filter(
-                fn (Character $c) => ! File::exists(storage_path("app/raw/{$c->character}.json"))
+                fn (Character $c) => !File::exists(storage_path("app/raw/{$c->character}.json"))
             );
 
             $round++;
@@ -64,7 +62,7 @@ class FetchAllDuolingoCharactersCommand extends Command
                     continue;
                 }
 
-                if (! $isNew) {
+                if (!$isNew) {
                     continue;
                 }
 
@@ -87,8 +85,7 @@ class FetchAllDuolingoCharactersCommand extends Command
         return self::SUCCESS;
     }
 
-    public function ignoreList(): array
-    {
+    public function ignoreList(): array {
         return [
             '喱',
             '花',

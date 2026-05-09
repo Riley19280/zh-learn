@@ -50,7 +50,10 @@ export interface PracticeAttempt {
     given_answer: string | null;
     correct_answer: string;
     response_time_ms: number | null;
-    options: string[];
+    options: string[] | null;
+    feedback: string | null;
 
     word?: Word;
 }
+
+export type UnsavedPracticeAttempt  = Omit<PracticeAttempt, 'id' | 'practice_session_id'>

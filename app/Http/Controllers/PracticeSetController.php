@@ -11,22 +11,18 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class PracticeSetController extends Controller
-{
-    public function __construct()
-    {
+class PracticeSetController extends Controller {
+    public function __construct() {
         $this->authorizeResource(PracticeSet::class, 'practiceSet');
     }
 
-    public function create(): Response
-    {
+    public function create(): Response {
         return Inertia::render('practice/sets/form', [
             'sections' => $this->sectionsWithWords(),
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
-    {
+    public function store(Request $request): RedirectResponse {
         /** @var User $user */
         $user = auth()->user();
 
@@ -46,8 +42,7 @@ class PracticeSetController extends Controller
         return redirect()->route('practice.index');
     }
 
-    public function edit(PracticeSet $practiceSet): Response
-    {
+    public function edit(PracticeSet $practiceSet): Response {
         return Inertia::render('practice/sets/form', [
             'practiceSet' => [
                 'id' => $practiceSet->id,
@@ -58,8 +53,7 @@ class PracticeSetController extends Controller
         ]);
     }
 
-    public function update(Request $request, PracticeSet $practiceSet): RedirectResponse
-    {
+    public function update(Request $request, PracticeSet $practiceSet): RedirectResponse {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'word_ids' => ['required', 'array', 'min:1'],
@@ -72,15 +66,13 @@ class PracticeSetController extends Controller
         return redirect()->route('practice.index');
     }
 
-    public function destroy(PracticeSet $practiceSet): RedirectResponse
-    {
+    public function destroy(PracticeSet $practiceSet): RedirectResponse {
         $practiceSet->delete();
 
         return redirect()->route('practice.index');
     }
 
-    private function sectionsWithWords(): array
-    {
+    private function sectionsWithWords(): array {
         /** @var User $user */
         $user = auth()->user();
 

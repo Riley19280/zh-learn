@@ -7,15 +7,12 @@ use App\Models\Word;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
-class NoteController extends Controller
-{
-    public function __construct()
-    {
+class NoteController extends Controller {
+    public function __construct() {
         $this->authorizeResource(Note::class, 'note');
     }
 
-    public function update(Request $request, Note $note): RedirectResponse
-    {
+    public function update(Request $request, Note $note): RedirectResponse {
         $validated = $request->validate([
             'content' => ['required', 'string', 'max:5000'],
         ]);
@@ -25,8 +22,7 @@ class NoteController extends Controller
         return back();
     }
 
-    public function store(Request $request, Word $word): RedirectResponse
-    {
+    public function store(Request $request, Word $word): RedirectResponse {
         $validated = $request->validate([
             'content' => ['required', 'string', 'max:5000'],
         ]);
@@ -41,8 +37,7 @@ class NoteController extends Controller
         return back();
     }
 
-    public function destroy(Note $note): RedirectResponse
-    {
+    public function destroy(Note $note): RedirectResponse {
         $note->delete();
 
         return back();

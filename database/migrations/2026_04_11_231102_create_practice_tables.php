@@ -4,10 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
-    public function up(): void
-    {
+return new class() extends Migration {
+    public function up(): void {
         // User-defined named collections of words to practice.
         Schema::create('practice_sets', function (Blueprint $table) {
             $table->id();
@@ -50,6 +48,7 @@ return new class extends Migration
             $table->boolean('is_correct');
             $table->json('options')->nullable()->after('answer_form'); // choices shown for multiple_choice/matching
             $table->unsignedInteger('response_time_ms')->nullable(); // time from prompt to submission
+            $table->text('feedback')->nullable(); // feedback about answer correctness
             $table->timestamps();
 
             $table->index(['word_id', 'exercise_type']);     // accuracy per word per type
@@ -57,8 +56,7 @@ return new class extends Migration
         });
     }
 
-    public function down(): void
-    {
+    public function down(): void {
         Schema::dropIfExists('practice_attempts');
         Schema::dropIfExists('practice_sessions');
         Schema::dropIfExists('practice_set_word');

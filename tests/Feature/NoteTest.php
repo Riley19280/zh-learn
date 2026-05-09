@@ -8,22 +8,19 @@ use App\Models\Word;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class NoteTest extends TestCase
-{
+class NoteTest extends TestCase {
     use RefreshDatabase;
 
     // --- Auth ---
 
-    public function test_guests_cannot_store_a_note(): void
-    {
+    public function test_guests_cannot_store_a_note(): void {
         $word = Word::factory()->create();
 
         $this->post(route('words.notes.store', $word), ['content' => 'Hello'])
             ->assertRedirect(route('login'));
     }
 
-    public function test_guests_cannot_delete_a_note(): void
-    {
+    public function test_guests_cannot_delete_a_note(): void {
         $user = User::factory()->create();
         $word = Word::factory()->create();
 
@@ -40,8 +37,7 @@ class NoteTest extends TestCase
 
     // --- Store ---
 
-    public function test_user_can_create_a_note_for_a_word(): void
-    {
+    public function test_user_can_create_a_note_for_a_word(): void {
         $user = User::factory()->create();
         $word = Word::factory()->create();
 
@@ -57,8 +53,7 @@ class NoteTest extends TestCase
         ]);
     }
 
-    public function test_store_requires_content(): void
-    {
+    public function test_store_requires_content(): void {
         $user = User::factory()->create();
         $word = Word::factory()->create();
 
@@ -69,8 +64,7 @@ class NoteTest extends TestCase
 
     // --- Update ---
 
-    public function test_user_can_update_their_own_note(): void
-    {
+    public function test_user_can_update_their_own_note(): void {
         $user = User::factory()->create();
         $word = Word::factory()->create();
 
@@ -88,8 +82,7 @@ class NoteTest extends TestCase
         $this->assertSame('Updated', $note->fresh()->content);
     }
 
-    public function test_user_cannot_update_another_users_note(): void
-    {
+    public function test_user_cannot_update_another_users_note(): void {
         $user = User::factory()->create();
         $other = User::factory()->create();
         $word = Word::factory()->create();
@@ -108,8 +101,7 @@ class NoteTest extends TestCase
         $this->assertSame('Original', $note->fresh()->content);
     }
 
-    public function test_update_requires_content(): void
-    {
+    public function test_update_requires_content(): void {
         $user = User::factory()->create();
         $word = Word::factory()->create();
 
@@ -127,8 +119,7 @@ class NoteTest extends TestCase
 
     // --- Destroy ---
 
-    public function test_user_can_delete_their_own_note(): void
-    {
+    public function test_user_can_delete_their_own_note(): void {
         $user = User::factory()->create();
         $word = Word::factory()->create();
 
@@ -146,8 +137,7 @@ class NoteTest extends TestCase
         $this->assertNull($note->fresh());
     }
 
-    public function test_user_cannot_delete_another_users_note(): void
-    {
+    public function test_user_cannot_delete_another_users_note(): void {
         $user = User::factory()->create();
         $other = User::factory()->create();
         $word = Word::factory()->create();

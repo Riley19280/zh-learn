@@ -6,10 +6,14 @@ import { MatchingExercise } from '@/components/practice/MatchingExercise';
 import { MultipleChoiceExercise } from '@/components/practice/MultipleChoiceExercise';
 import { ResultsScreen } from '@/components/practice/ResultsScreen';
 import { TypingExercise } from '@/components/practice/TypingExercise';
-import type { LocalAttempt } from '@/components/practice/types';
 import { index as practiceIndex } from '@/routes/practice';
 import { complete as completeRoute } from '@/routes/practice/sessions/index';
-import type { PracticeAttempt, PracticeSession, Word } from '@/types';
+import type {
+    PracticeAttempt,
+    PracticeSession,
+    UnsavedPracticeAttempt,
+    Word,
+} from '@/types';
 
 interface Props {
     session: PracticeSession;
@@ -22,15 +26,15 @@ export default function PracticeSession() {
     const { session, words, results } = usePage<Props>().props;
 
     const [wordIndex, setWordIndex] = useState(0);
-    const [pendingAttempts, setPendingAttempts] = useState<LocalAttempt[]>([]);
-    const [feedbackAttempt, setFeedbackAttempt] = useState<LocalAttempt | null>(null);
+    const [pendingAttempts, setPendingAttempts] = useState<UnsavedPracticeAttempt[]>([]);
+    const [feedbackAttempt, setFeedbackAttempt] = useState<UnsavedPracticeAttempt | null>(null);
     const [processing, setProcessing] = useState(false);
 
     const isMatching = session.exercise_type === 'matching';
     const totalWords = words.length;
     const completedCount =  isMatching ? pendingAttempts.filter(attempt => attempt.is_correct).length : wordIndex;
 
-    const finishSession = useCallback((attempts: LocalAttempt[]) => {
+    const finishSession = useCallback((attempts: UnsavedPracticeAttempt[]) => {
             setProcessing(true);
             router.post(completeRoute.url(session.id), { attempts: attempts } as any, {
                 onFinish: () => {
@@ -43,20 +47,29 @@ export default function PracticeSession() {
     );
 
     // MC and Typing: user answered — show feedback bar
-    const handleAnswer = useCallback((attempt: LocalAttempt) => {
-        const newAttempts = [...pendingAttempts, attempt]
+    const handleAnswer = useCallback(
+        (attempt: UnsavedPracticeAttempt) => {
+            const newAttempts = [...pendingAttempts, attempt];
 
-        setFeedbackAttempt(attempt);
-        setPendingAttempts(newAttempts)
+            setFeedbackAttempt(attempt);
+            setPendingAttempts(newAttempts);
 
-        if (isMatching) {
-            if (newAttempts.filter((attempt) => attempt.is_correct).length >= totalWords) {
-                finishSession(newAttempts);
-            } else {
-                setWordIndex(pendingAttempts.filter((attempt) => attempt.is_correct).length,);
+            if (isMatching) {
+                if (
+                    newAttempts.filter((attempt) => attempt.is_correct)
+                        .length >= totalWords
+                ) {
+                    finishSession(newAttempts);
+                } else {
+                    setWordIndex(
+                        pendingAttempts.filter((attempt) => attempt.is_correct)
+                            .length,
+                    );
+                }
             }
-        }
-    }, [finishSession, isMatching, pendingAttempts, totalWords]);
+        },
+        [finishSession, isMatching, pendingAttempts, totalWords],
+    );
 
     // MC and Typing: Continue pressed in feedback bar — advance
     const handleContinue = useCallback(() => {

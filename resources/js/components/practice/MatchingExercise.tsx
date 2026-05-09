@@ -1,7 +1,6 @@
-import type { PracticeSession, Word } from '@/types';
+import { PracticeSession, UnsavedPracticeAttempt, Word } from '@/types';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { getCorrectAnswer, getQuestionText } from './helpers';
-import type { LocalAttempt } from './types';
 
 const MATCH_BATCH_SIZE = 6
 
@@ -12,7 +11,7 @@ function MatchingBatch({
 }: {
     words: Word[];
     session: PracticeSession;
-    onAnswer: (attempt: LocalAttempt) => void;
+    onAnswer: (attempt: UnsavedPracticeAttempt) => void;
 }) {
     const [leftWordId, setLeftWordId] = useState<number | null>(null);
     const [matched, setMatched] = useState<Set<number>>(new Set());
@@ -52,10 +51,12 @@ function MatchingBatch({
         lastMatchTime.current = now;
 
         setFlash({ leftId: leftWordId, rightId: rightWordId, correct });
-        setTimeout(() => {
+        setTimeout(
+            () => {
                 setFlash(null);
                 setLeftWordId(null);
-            }, correct ? 350 : 600,
+            },
+            correct ? 350 : 600,
         );
 
         const leftWord = words.find((w) => w.id === leftWordId)!;
@@ -65,7 +66,7 @@ function MatchingBatch({
             setMatched((prev) => new Set(prev).add(rightWordId));
         }
 
-        const attempt: LocalAttempt = {
+        const attempt: UnsavedPracticeAttempt = {
             word_id: leftWord.id,
             given_answer: getCorrectAnswer(leftWord, session.answer_form),
             correct_answer: getCorrectAnswer(rightWord, session.answer_form),
@@ -74,11 +75,13 @@ function MatchingBatch({
             options: rightItems.map((r) =>
                 getCorrectAnswer(r, session.answer_form),
             ),
+            feedback: null
         };
         onAnswerRef.current(attempt);
     }
 
-    const labelClass = 'mb-1 text-xs font-medium uppercase tracking-wide text-muted-foreground';
+    const labelClass =
+        'mb-1 text-xs font-medium uppercase tracking-wide text-muted-foreground';
 
     function leftItemClass(word: Word) {
         const isMatched = matched.has(word.id);
@@ -168,7 +171,7 @@ export function MatchingExercise({
 }: {
     words: Word[];
     session: PracticeSession;
-    onAnswer: (attempt: LocalAttempt) => void;
+    onAnswer: (attempt: UnsavedPracticeAttempt) => void;
 }) {
     const [batchNumber, setBatchNumber] = useState(0);
     const onAnswerRef = useRef(onAnswer);
@@ -176,10 +179,13 @@ export function MatchingExercise({
     onAnswerRef.current = onAnswer;
     const answeredInBatchRef = useRef(0);
 
-    const currentBatchWords = words.slice(batchNumber, batchNumber + MATCH_BATCH_SIZE);
+    const currentBatchWords = words.slice(
+        batchNumber,
+        batchNumber + MATCH_BATCH_SIZE,
+    );
 
     const handleBatchAnswer = useCallback(
-        (attempt: LocalAttempt) => {
+        (attempt: UnsavedPracticeAttempt) => {
             onAnswerRef.current(attempt);
             answeredInBatchRef.current += 1;
 

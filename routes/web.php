@@ -16,9 +16,9 @@ Route::redirect('/', '/login')->name('home');
 // ])->name('home');
 
 Route::get('tts/{filename}', function (string $filename) {
-    $path = public_path('tts/'.urldecode($filename));
+    $path = public_path('tts/' . urldecode($filename));
 
-    abort_if(! file_exists($path), 404);
+    abort_if(!file_exists($path), 404);
 
     return response()->file($path, ['Content-Type' => 'audio/mpeg']);
 })->where('filename', '.+\.mp3')->name('tts');
@@ -33,6 +33,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->parameters(['sessions' => 'practiceSession']);
     Route::post('practice/sessions/{practiceSession}/complete', [PracticeSessionController::class, 'complete'])
         ->name('practice.sessions.complete')
+        ->middleware('auth');
+    Route::post('practice/sessions/{practiceSession}/check-answer', [PracticeSessionController::class, 'checkAnswer'])
+        ->name('practice.sessions.check-answer')
         ->middleware('auth');
     Route::resource('practice/sets', PracticeSetController::class)
         ->only(['create', 'store', 'edit', 'update', 'destroy'])
@@ -49,4 +52,4 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('notes/{note}', [NoteController::class, 'destroy'])->name('notes.destroy');
 });
 
-require __DIR__.'/settings.php';
+require __DIR__ . '/settings.php';

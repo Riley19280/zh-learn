@@ -9,22 +9,18 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable(['duolingo_id', 'title', 'section_number', 'unit_number'])]
-class Section extends Model
-{
+class Section extends Model {
     use HasFactory;
 
-    public function words(): BelongsToMany
-    {
+    public function words(): BelongsToMany {
         return $this->belongsToMany(Word::class);
     }
 
-    public function users(): BelongsToMany
-    {
+    public function users(): BelongsToMany {
         return $this->belongsToMany(User::class)->using(UserSection::class)->withPivot('is_unlocked')->withTimestamps();
     }
 
-    public function userSections(): HasMany
-    {
+    public function userSections(): HasMany {
         return $this->hasMany(UserSection::class);
     }
 }

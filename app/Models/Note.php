@@ -8,15 +8,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 #[Fillable(['user_id', 'notable_type', 'notable_id', 'content'])]
-class Note extends Model
-{
-    public function notable(): MorphTo
-    {
+class Note extends Model {
+    public function notable(): MorphTo {
         return $this->morphTo();
     }
 
-    public function user(): BelongsTo
-    {
+    public function user(): BelongsTo {
         return $this->belongsTo(User::class);
     }
 }

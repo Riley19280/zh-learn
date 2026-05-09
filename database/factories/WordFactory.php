@@ -8,15 +8,13 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 /**
  * @extends Factory<Word>
  */
-class WordFactory extends Factory
-{
+class WordFactory extends Factory {
     /**
      * Define the model's default state.
      *
      * @return array<string, mixed>
      */
-    public function definition(): array
-    {
+    public function definition(): array {
         return [
             'text' => fake()->unique()->lexify('???'),
             'pinyin' => fake()->lexify('???'),

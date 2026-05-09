@@ -10,20 +10,16 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 #[Fillable(['practice_session_id', 'word_id', 'exercise_type', 'question_form', 'answer_form', 'options', 'given_answer', 'correct_answer', 'is_correct', 'response_time_ms'])]
-class PracticeAttempt extends Model
-{
-    public function session(): BelongsTo
-    {
+class PracticeAttempt extends Model {
+    public function session(): BelongsTo {
         return $this->belongsTo(PracticeSession::class, 'practice_session_id');
     }
 
-    public function word(): BelongsTo
-    {
+    public function word(): BelongsTo {
         return $this->belongsTo(Word::class);
     }
 
-    protected function casts(): array
-    {
+    protected function casts(): array {
         return [
             'exercise_type' => ExerciseType::class,
             'question_form' => QuestionForm::class,

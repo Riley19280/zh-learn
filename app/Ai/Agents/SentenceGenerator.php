@@ -9,15 +9,13 @@ use Laravel\Ai\Contracts\HasStructuredOutput;
 use Laravel\Ai\Promptable;
 use Stringable;
 
-class SentenceGenerator implements Agent, HasStructuredOutput
-{
+class SentenceGenerator implements Agent, HasStructuredOutput {
     use Promptable;
 
     /**
      * Get the instructions that the agent should follow.
      */
-    public function instructions(): Stringable|string
-    {
+    public function instructions(): Stringable|string {
         return view('ai.SentenceGeneratorPrompt', [
             'words' => Auth::user()->words->filter(fn ($w) => $w->pivot->is_available)->pluck('text'),
         ])->render();
@@ -26,8 +24,7 @@ class SentenceGenerator implements Agent, HasStructuredOutput
     /**
      * Get the agent's structured output schema definition.
      */
-    public function schema(JsonSchema $schema): array
-    {
+    public function schema(JsonSchema $schema): array {
         return [
             'sentences' => $schema->array()->required()->items($schema->object(fn (JsonSchema $schema) => [
                 'english' => $schema->string()->required(),

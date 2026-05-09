@@ -1,8 +1,8 @@
-import type { PracticeSession, Word } from '@/types';
+import  { PracticeSession,
+    UnsavedPracticeAttempt, Word } from '@/types';
 import { useMemo, useRef, useState } from 'react';
 import { generateMCOptions, getCorrectAnswer } from './helpers';
 import { QuestionDisplay } from './QuestionDisplay';
-import type { LocalAttempt } from './types';
 
 export function MultipleChoiceExercise({
     word,
@@ -13,7 +13,7 @@ export function MultipleChoiceExercise({
     word: Word;
     allWords: Word[];
     session: PracticeSession;
-    onAnswer: (attempt: LocalAttempt) => void;
+    onAnswer: (attempt: UnsavedPracticeAttempt) => void;
 }) {
     const [selected, setSelected] = useState<string | null>(null);
     const startTime = useRef(Date.now());
@@ -36,6 +36,7 @@ export function MultipleChoiceExercise({
             is_correct: option === correctAnswer,
             response_time_ms: Date.now() - startTime.current,
             options,
+            feedback: null
         });
     }
 
@@ -46,11 +47,18 @@ export function MultipleChoiceExercise({
                 {options.map((opt) => {
                     const isCorrect = opt === correctAnswer;
                     const isSelected = opt === selected;
-                    let cls = 'border-border hover:border-primary hover:bg-primary/5 cursor-pointer';
+                    let cls =
+                        'border-border hover:border-primary hover:bg-primary/5 cursor-pointer';
                     if (selected !== null) {
-                        if (isCorrect) cls = 'border-green-500 bg-green-50 text-green-800 dark:bg-green-950 dark:text-green-200';
-                        else if (isSelected) cls = 'border-red-400 bg-red-50 text-red-800 dark:bg-red-950 dark:text-red-200';
-                        else cls = 'border-border bg-muted/30 text-muted-foreground';
+                        if (isCorrect)
+                            cls =
+                                'border-green-500 bg-green-50 text-green-800 dark:bg-green-950 dark:text-green-200';
+                        else if (isSelected)
+                            cls =
+                                'border-red-400 bg-red-50 text-red-800 dark:bg-red-950 dark:text-red-200';
+                        else
+                            cls =
+                                'border-border bg-muted/30 text-muted-foreground';
                     }
                     return (
                         <button

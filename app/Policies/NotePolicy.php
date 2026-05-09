@@ -5,20 +5,16 @@ namespace App\Policies;
 use App\Models\Note;
 use App\Models\User;
 
-class NotePolicy
-{
-    public function create(User $user): bool
-    {
+class NotePolicy {
+    public function create(User $user): bool {
         return true;
     }
 
-    public function update(User $user, Note $note): bool
-    {
+    public function update(User $user, Note $note): bool {
         return $user->id === $note->user_id;
     }
 
-    public function delete(User $user, Note $note): bool
-    {
+    public function delete(User $user, Note $note): bool {
         return $user->id === $note->user_id;
     }
 }

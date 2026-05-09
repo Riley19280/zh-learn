@@ -8,26 +8,22 @@ use App\Models\Word;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class PracticeSetTest extends TestCase
-{
+class PracticeSetTest extends TestCase {
     use RefreshDatabase;
 
     // --- Auth ---
 
-    public function test_guests_are_redirected_from_practice_index(): void
-    {
+    public function test_guests_are_redirected_from_practice_index(): void {
         $this->get(route('practice.index'))->assertRedirect(route('login'));
     }
 
-    public function test_guests_are_redirected_from_create(): void
-    {
+    public function test_guests_are_redirected_from_create(): void {
         $this->get(route('practice.sets.create'))->assertRedirect(route('login'));
     }
 
     // --- Index ---
 
-    public function test_index_lists_only_the_users_own_sets(): void
-    {
+    public function test_index_lists_only_the_users_own_sets(): void {
         $user = User::factory()->create();
         $other = User::factory()->create();
 
@@ -46,8 +42,7 @@ class PracticeSetTest extends TestCase
 
     // --- Create ---
 
-    public function test_create_renders_form_with_sections(): void
-    {
+    public function test_create_renders_form_with_sections(): void {
         $user = User::factory()->create();
 
         $response = $this->actingAs($user)->get(route('practice.sets.create'));
@@ -62,8 +57,7 @@ class PracticeSetTest extends TestCase
 
     // --- Store ---
 
-    public function test_user_can_create_a_practice_set(): void
-    {
+    public function test_user_can_create_a_practice_set(): void {
         $user = User::factory()->create();
         $words = Word::factory(3)->create();
 
@@ -78,8 +72,7 @@ class PracticeSetTest extends TestCase
         $this->assertCount(3, $set->words);
     }
 
-    public function test_store_requires_a_name(): void
-    {
+    public function test_store_requires_a_name(): void {
         $user = User::factory()->create();
         $word = Word::factory()->create();
 
@@ -88,8 +81,7 @@ class PracticeSetTest extends TestCase
             ->assertSessionHasErrors('name');
     }
 
-    public function test_store_requires_at_least_one_word(): void
-    {
+    public function test_store_requires_at_least_one_word(): void {
         $user = User::factory()->create();
 
         $this->actingAs($user)
@@ -99,8 +91,7 @@ class PracticeSetTest extends TestCase
 
     // --- Edit ---
 
-    public function test_user_can_visit_edit_for_their_own_set(): void
-    {
+    public function test_user_can_visit_edit_for_their_own_set(): void {
         $user = User::factory()->create();
         $set = PracticeSet::factory()->create(['user_id' => $user->id]);
 
@@ -113,8 +104,7 @@ class PracticeSetTest extends TestCase
         );
     }
 
-    public function test_user_cannot_edit_another_users_set(): void
-    {
+    public function test_user_cannot_edit_another_users_set(): void {
         $user = User::factory()->create();
         $other = User::factory()->create();
         $set = PracticeSet::factory()->create(['user_id' => $other->id]);
@@ -126,8 +116,7 @@ class PracticeSetTest extends TestCase
 
     // --- Update ---
 
-    public function test_user_can_update_their_own_set(): void
-    {
+    public function test_user_can_update_their_own_set(): void {
         $user = User::factory()->create();
         $set = PracticeSet::factory()->create(['user_id' => $user->id, 'name' => 'Old Name']);
         $words = Word::factory(2)->create();
@@ -141,8 +130,7 @@ class PracticeSetTest extends TestCase
         $this->assertCount(2, $set->fresh()->words);
     }
 
-    public function test_user_cannot_update_another_users_set(): void
-    {
+    public function test_user_cannot_update_another_users_set(): void {
         $user = User::factory()->create();
         $other = User::factory()->create();
         $set = PracticeSet::factory()->create(['user_id' => $other->id]);
@@ -155,8 +143,7 @@ class PracticeSetTest extends TestCase
 
     // --- Destroy ---
 
-    public function test_user_can_delete_their_own_set(): void
-    {
+    public function test_user_can_delete_their_own_set(): void {
         $user = User::factory()->create();
         $set = PracticeSet::factory()->create(['user_id' => $user->id]);
 
@@ -167,8 +154,7 @@ class PracticeSetTest extends TestCase
         $this->assertNull($set->fresh());
     }
 
-    public function test_user_cannot_delete_another_users_set(): void
-    {
+    public function test_user_cannot_delete_another_users_set(): void {
         $user = User::factory()->create();
         $other = User::factory()->create();
         $set = PracticeSet::factory()->create(['user_id' => $other->id]);

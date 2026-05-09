@@ -8,21 +8,18 @@ use App\Models\Word;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class WordTest extends TestCase
-{
+class WordTest extends TestCase {
     use RefreshDatabase;
 
     // --- Auth ---
 
-    public function test_guests_are_redirected_from_words_index(): void
-    {
+    public function test_guests_are_redirected_from_words_index(): void {
         $this->get(route('words.index'))->assertRedirect(route('login'));
     }
 
     // --- Words ---
 
-    public function test_words_index_shows_all_users_words(): void
-    {
+    public function test_words_index_shows_all_users_words(): void {
         $user = User::factory()->create();
         $available = Word::factory()->create();
         $locked = Word::factory()->create();
@@ -37,8 +34,7 @@ class WordTest extends TestCase
             );
     }
 
-    public function test_words_index_marks_availability_correctly(): void
-    {
+    public function test_words_index_marks_availability_correctly(): void {
         $user = User::factory()->create();
         $available = Word::factory()->create(['text' => 'aaa']);
         $locked = Word::factory()->create(['text' => 'bbb']);
@@ -52,8 +48,7 @@ class WordTest extends TestCase
             );
     }
 
-    public function test_words_index_excludes_other_users_words(): void
-    {
+    public function test_words_index_excludes_other_users_words(): void {
         $user = User::factory()->create();
         $other = User::factory()->create();
         $word = Word::factory()->create();
@@ -65,8 +60,7 @@ class WordTest extends TestCase
 
     // --- Notes ---
 
-    public function test_words_index_includes_users_notes(): void
-    {
+    public function test_words_index_includes_users_notes(): void {
         $user = User::factory()->create();
         $word = Word::factory()->create();
         $user->words()->attach($word->id, ['is_available' => true]);
@@ -85,8 +79,7 @@ class WordTest extends TestCase
             );
     }
 
-    public function test_words_index_excludes_other_users_notes(): void
-    {
+    public function test_words_index_excludes_other_users_notes(): void {
         $user = User::factory()->create();
         $other = User::factory()->create();
         $word = Word::factory()->create();

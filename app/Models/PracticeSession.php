@@ -10,10 +10,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class PracticeSession extends Model
-{
-    protected function casts(): array
-    {
+class PracticeSession extends Model {
+    protected function casts(): array {
         return [
             'exercise_structure' => ExerciseStructure::class,
             'exercise_type' => ExerciseType::class,
@@ -23,24 +21,19 @@ class PracticeSession extends Model
         ];
     }
 
-    public function user(): BelongsTo
-    {
+    public function user(): BelongsTo {
         return $this->belongsTo(User::class);
     }
 
-    public function practiceSet(): BelongsTo
-    {
+    public function practiceSet(): BelongsTo {
         return $this->belongsTo(PracticeSet::class);
     }
 
-    public function attempts(): HasMany
-    {
+    public function attempts(): HasMany {
         return $this->hasMany(PracticeAttempt::class);
     }
 
-
-    public function correctAttempts(): HasMany
-    {
+    public function correctAttempts(): HasMany {
         return $this->hasMany(PracticeAttempt::class)->where('is_correct', true);
     }
 }

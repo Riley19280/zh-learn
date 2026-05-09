@@ -24,7 +24,7 @@ export default function PracticeSetForm() {
     const isEditing = !!practiceSet;
 
     const [name, setName] = useState(practiceSet?.name ?? '');
-    const [selectedIds, setSelectedIds] = useState<Set<number>>(() => new Set(practiceSet?.wordIds ?? []));
+    const [selectedIds, setSelectedIds] = useState<Set<number>>(() => new Set(practiceSet?.words?.map(w => w.id) ?? []));
     const [showLocked, setShowLocked] = useState(false);
     const [search, setSearch] = useState('');
     const [errors, setErrors] = useState<Record<string, string>>({});

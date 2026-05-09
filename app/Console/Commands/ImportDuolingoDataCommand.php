@@ -11,13 +11,11 @@ use Illuminate\Console\Command;
 
 #[Signature('duolingo:import')]
 #[Description('Import all captured request files from database/data into the database')]
-class ImportDuolingoDataCommand extends Command
-{
-    public function handle(DuolingoImporter $importer, VocabularyStats $stats): int
-    {
+class ImportDuolingoDataCommand extends Command {
+    public function handle(DuolingoImporter $importer, VocabularyStats $stats): int {
         $rawPath = database_path('data');
 
-        if (! is_dir($rawPath)) {
+        if (!is_dir($rawPath)) {
             $this->error("Raw directory not found: {$rawPath}");
 
             return self::FAILURE;
@@ -33,20 +31,20 @@ class ImportDuolingoDataCommand extends Command
 
         $user = User::first();
 
-        if (! $user) {
+        if (!$user) {
             $this->error('No users found — run the user seeder first.');
 
             return self::FAILURE;
         }
 
-        $this->info('Found '.count($files).' file(s). Importing…');
+        $this->info('Found ' . count($files) . ' file(s). Importing…');
         $this->newLine();
 
         foreach ($files as $file) {
             $data = json_decode(file_get_contents($file), associative: true);
 
-            if (! is_array($data)) {
-                $this->warn('Skipping invalid JSON: '.basename($file));
+            if (!is_array($data)) {
+                $this->warn('Skipping invalid JSON: ' . basename($file));
 
                 continue;
             }
@@ -56,7 +54,7 @@ class ImportDuolingoDataCommand extends Command
                 ? collect($data)->pluck('responseBody')->all()
                 : [$data];
 
-            $this->line('  Processing <fg=cyan>'.basename($file).'</> ('.count($objects).' object(s))');
+            $this->line('  Processing <fg=cyan>' . basename($file) . '</> (' . count($objects) . ' object(s))');
 
             foreach ($objects as $object) {
                 $importer->processResponseBody($object, $user);

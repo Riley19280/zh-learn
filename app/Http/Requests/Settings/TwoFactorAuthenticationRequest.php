@@ -6,8 +6,7 @@ use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Laravel\Fortify\InteractsWithTwoFactorState;
 
-class TwoFactorAuthenticationRequest extends FormRequest
-{
+class TwoFactorAuthenticationRequest extends FormRequest {
     use InteractsWithTwoFactorState;
 
     /**
@@ -15,8 +14,7 @@ class TwoFactorAuthenticationRequest extends FormRequest
      *
      * @return array<string, ValidationRule|array<mixed>|string>
      */
-    public function rules(): array
-    {
+    public function rules(): array {
         return [];
     }
 }

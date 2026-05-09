@@ -9,15 +9,13 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 /**
  * @extends Factory<PracticeSet>
  */
-class PracticeSetFactory extends Factory
-{
+class PracticeSetFactory extends Factory {
     /**
      * Define the model's default state.
      *
      * @return array<string, mixed>
      */
-    public function definition(): array
-    {
+    public function definition(): array {
         return [
             'user_id' => User::factory(),
             'name' => fake()->words(3, true),

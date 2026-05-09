@@ -11,12 +11,10 @@ use Illuminate\Support\Facades\Http;
 
 #[Signature('duolingo:fetch-tts {word? : Chinese text of a specific word to download}')]
 #[Description('Download missing TTS audio files into public/tts')]
-class FetchDuolingoTTS extends Command
-{
+class FetchDuolingoTTS extends Command {
     private const DIR = 'tts';
 
-    public function handle(): int
-    {
+    public function handle(): int {
         $words = $this->wordsToDownload();
 
         if ($words->isEmpty()) {
@@ -37,7 +35,7 @@ class FetchDuolingoTTS extends Command
                 ->get($word->tts_url);
 
             if ($response->successful()) {
-                file_put_contents(public_path(self::DIR."/{$word->text}.mp3"), $response->body());
+                file_put_contents(public_path(self::DIR . "/{$word->text}.mp3"), $response->body());
                 $downloaded++;
             } else {
                 $failed++;
@@ -59,8 +57,7 @@ class FetchDuolingoTTS extends Command
     /**
      * @return Collection<int, Word>
      */
-    private function wordsToDownload(): Collection
-    {
+    private function wordsToDownload(): Collection {
         $query = Word::whereNotNull('tts_url');
 
         if ($text = $this->argument('word')) {
@@ -68,7 +65,7 @@ class FetchDuolingoTTS extends Command
         }
 
         return $query->get()->filter(
-            fn (Word $word) => ! file_exists(public_path(self::DIR."/{$word->text}.mp3"))
+            fn (Word $word) => !file_exists(public_path(self::DIR . "/{$word->text}.mp3"))
         );
     }
 }

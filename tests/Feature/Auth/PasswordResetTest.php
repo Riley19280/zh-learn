@@ -9,26 +9,22 @@ use Illuminate\Support\Facades\Notification;
 use Laravel\Fortify\Features;
 use Tests\TestCase;
 
-class PasswordResetTest extends TestCase
-{
+class PasswordResetTest extends TestCase {
     use RefreshDatabase;
 
-    protected function setUp(): void
-    {
+    protected function setUp(): void {
         parent::setUp();
 
         $this->skipUnlessFortifyHas(Features::resetPasswords());
     }
 
-    public function test_reset_password_link_screen_can_be_rendered()
-    {
+    public function test_reset_password_link_screen_can_be_rendered() {
         $response = $this->get(route('password.request'));
 
         $response->assertOk();
     }
 
-    public function test_reset_password_link_can_be_requested()
-    {
+    public function test_reset_password_link_can_be_requested() {
         Notification::fake();
 
         $user = User::factory()->create();
@@ -38,8 +34,7 @@ class PasswordResetTest extends TestCase
         Notification::assertSentTo($user, ResetPassword::class);
     }
 
-    public function test_reset_password_screen_can_be_rendered()
-    {
+    public function test_reset_password_screen_can_be_rendered() {
         Notification::fake();
 
         $user = User::factory()->create();
@@ -55,8 +50,7 @@ class PasswordResetTest extends TestCase
         });
     }
 
-    public function test_password_can_be_reset_with_valid_token()
-    {
+    public function test_password_can_be_reset_with_valid_token() {
         Notification::fake();
 
         $user = User::factory()->create();
@@ -79,8 +73,7 @@ class PasswordResetTest extends TestCase
         });
     }
 
-    public function test_password_cannot_be_reset_with_invalid_token(): void
-    {
+    public function test_password_cannot_be_reset_with_invalid_token(): void {
         $user = User::factory()->create();
 
         $response = $this->post(route('password.update'), [

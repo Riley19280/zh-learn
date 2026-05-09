@@ -9,17 +9,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 #[Fillable(['user_id', 'name'])]
-class PracticeSet extends Model
-{
+class PracticeSet extends Model {
     use HasFactory;
 
-    public function user(): BelongsTo
-    {
+    public function user(): BelongsTo {
         return $this->belongsTo(User::class);
     }
 
-    public function words(): BelongsToMany
-    {
+    public function words(): BelongsToMany {
         return $this->belongsToMany(Word::class, 'practice_set_word');
     }
 }

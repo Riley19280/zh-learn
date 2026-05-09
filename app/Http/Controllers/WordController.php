@@ -8,10 +8,8 @@ use App\Models\Word;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class WordController extends Controller
-{
-    public function index(): Response
-    {
+class WordController extends Controller {
+    public function index(): Response {
         /** @var User $user */
         $user = auth()->user();
 

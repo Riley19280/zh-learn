@@ -11,13 +11,11 @@ use App\Models\WordCharacter;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 
-class DuolingoImporter
-{
+class DuolingoImporter {
     /**
      * Process a single decoded response body object.
      */
-    public function processResponseBody(array $data, User $user): void
-    {
+    public function processResponseBody(array $data, User $user): void {
         DB::transaction(function () use ($data, $user) {
             foreach (Arr::get($data, 'sections', []) as $sectionData) {
                 $section = $this->upsertSection($sectionData);
@@ -52,8 +50,7 @@ class DuolingoImporter
      * Sync the is_unlocked state for all sections based on whether every word
      * in the section has an available user_word record for the given user.
      */
-    public function syncSectionUnlocks(User $user): void
-    {
+    public function syncSectionUnlocks(User $user): void {
         Section::with('words:id')->get()->each(function (Section $section) use ($user) {
             $wordIds = $section->words->pluck('id');
 
@@ -70,8 +67,7 @@ class DuolingoImporter
         });
     }
 
-    public function upsertSection(array $sectionData): Section
-    {
+    public function upsertSection(array $sectionData): Section {
         $title = Arr::get($sectionData, 'title', '');
         $sectionNumber = 0;
         $unitNumber = 0;
@@ -91,8 +87,7 @@ class DuolingoImporter
         );
     }
 
-    public function upsertWord(array $wordData): Word
-    {
+    public function upsertWord(array $wordData): Word {
         $word = Word::updateOrCreate(
             ['text' => Arr::get($wordData, 'text')],
             array_filter([

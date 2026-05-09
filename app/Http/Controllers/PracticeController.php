@@ -12,10 +12,8 @@ use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class PracticeController extends Controller
-{
-    public function index(): Response
-    {
+class PracticeController extends Controller {
+    public function index(): Response {
         $sets = PracticeSet::query()
             ->where('user_id', Auth::user()->id)
             ->withCount('words')

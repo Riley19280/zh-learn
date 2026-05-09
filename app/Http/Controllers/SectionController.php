@@ -11,10 +11,8 @@ use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class SectionController extends Controller
-{
-    public function index(): Response
-    {
+class SectionController extends Controller {
+    public function index(): Response {
         /** @var User $user */
         $user = auth()->user();
 
@@ -44,8 +42,7 @@ class SectionController extends Controller
         ]);
     }
 
-    public function show(Section $section): Response
-    {
+    public function show(Section $section): Response {
         /** @var User $user */
         $user = auth()->user();
 
@@ -73,8 +70,7 @@ class SectionController extends Controller
         ]);
     }
 
-    public function update(Request $request, Section $section): RedirectResponse
-    {
+    public function update(Request $request, Section $section): RedirectResponse {
         /** @var User $user */
         $user = auth()->user();
 

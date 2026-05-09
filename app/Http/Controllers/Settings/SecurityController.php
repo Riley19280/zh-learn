@@ -10,10 +10,8 @@ use Inertia\Inertia;
 use Inertia\Response;
 use Laravel\Fortify\Features;
 
-class SecurityController extends Controller
-{
-    public function __construct()
-    {
+class SecurityController extends Controller {
+    public function __construct() {
         if (Features::canManageTwoFactorAuthentication()
             && Features::optionEnabled(Features::twoFactorAuthentication(), 'confirmPassword')) {
             $this->middleware('password.confirm', ['only' => ['edit']]);
@@ -23,8 +21,7 @@ class SecurityController extends Controller
     /**
      * Show the user's security settings page.
      */
-    public function edit(TwoFactorAuthenticationRequest $request): Response
-    {
+    public function edit(TwoFactorAuthenticationRequest $request): Response {
         $props = [
             'canManageTwoFactor' => Features::canManageTwoFactorAuthentication(),
         ];
@@ -42,8 +39,7 @@ class SecurityController extends Controller
     /**
      * Update the user's password.
      */
-    public function update(PasswordUpdateRequest $request): RedirectResponse
-    {
+    public function update(PasswordUpdateRequest $request): RedirectResponse {
         $request->user()->update([
             'password' => $request->password,
         ]);

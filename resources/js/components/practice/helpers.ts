@@ -22,7 +22,7 @@ export function stripDiacritics(s: string): string {
         .trim();
 }
 
-export function checkAnswer(given: string, correct: string, answerForm: string): boolean {
+export function checkAnswerClient(given: string, correct: string, answerForm: string): boolean {
     const g = given.trim().toLowerCase();
     const c = correct.trim().toLowerCase();
     if (g === c) return true;

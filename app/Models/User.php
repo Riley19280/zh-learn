@@ -14,8 +14,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 
 #[Fillable(['name', 'email', 'password'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
-class User extends Authenticatable
-{
+class User extends Authenticatable {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable, TwoFactorAuthenticatable;
 
@@ -24,18 +23,15 @@ class User extends Authenticatable
      *
      * @return array<string, string>
      */
-    public function words(): BelongsToMany
-    {
+    public function words(): BelongsToMany {
         return $this->belongsToMany(Word::class)->using(UserWord::class)->withPivot('is_available')->withTimestamps();
     }
 
-    public function sections(): BelongsToMany
-    {
+    public function sections(): BelongsToMany {
         return $this->belongsToMany(Section::class)->using(UserSection::class)->withPivot('is_unlocked')->withTimestamps();
     }
 
-    protected function casts(): array
-    {
+    protected function casts(): array {
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',

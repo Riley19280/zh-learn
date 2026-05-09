@@ -8,8 +8,7 @@ use Illuminate\Http\Request;
 /**
  * https://github.com/NativePHP/mobile-air/issues/96
  */
-class NativeBridgePostFixMiddleware
-{
+class NativeBridgePostFixMiddleware {
     /**
      * NativePHP body-capture workaround.
      *
@@ -21,8 +20,7 @@ class NativeBridgePostFixMiddleware
      * This middleware decodes it and merges the data into the request so that
      * $request->input() and $request->validate() work normally.
      */
-    public function handle(Request $request, Closure $next)
-    {
+    public function handle(Request $request, Closure $next) {
         $raw = $request->header('X-Body');
         if ($raw) {
             $data = json_decode(urldecode(base64_decode($raw)), true);
