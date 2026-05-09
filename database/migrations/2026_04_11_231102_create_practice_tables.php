@@ -51,7 +51,6 @@ return new class() extends Migration {
             $table->text('feedback')->nullable(); // feedback about answer correctness
             $table->timestamps();
 
-            $table->index(['word_id', 'exercise_type']);     // accuracy per word per type
             $table->index(['practice_session_id', 'is_correct']); // session scoring
         });
     }
