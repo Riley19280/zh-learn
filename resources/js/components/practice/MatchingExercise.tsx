@@ -170,36 +170,36 @@ export function MatchingExercise({
     session: PracticeSession;
     onAnswer: (attempt: LocalAttempt) => void;
 }) {
-    const [batchStart, setBatchStart] = useState(0);
+    const [batchNumber, setBatchNumber] = useState(0);
     const onAnswerRef = useRef(onAnswer);
     // eslint-disable-next-line react-hooks/refs
     onAnswerRef.current = onAnswer;
     const answeredInBatchRef = useRef(0);
 
-    const currentBatch = words.slice(batchStart, batchStart + MATCH_BATCH_SIZE);
+    const currentBatchWords = words.slice(batchNumber, batchNumber + MATCH_BATCH_SIZE);
 
     const handleBatchAnswer = useCallback(
         (attempt: LocalAttempt) => {
             onAnswerRef.current(attempt);
             answeredInBatchRef.current += 1;
 
-            if (answeredInBatchRef.current >= currentBatch.length) {
+            if (answeredInBatchRef.current >= currentBatchWords.length) {
                 answeredInBatchRef.current = 0;
 
-                const next = batchStart + MATCH_BATCH_SIZE;
+                const next = batchNumber + MATCH_BATCH_SIZE;
 
                 if (next < words.length) {
-                    setBatchStart(next);
+                    setBatchNumber(next);
                 }
             }
         },
-        [batchStart, currentBatch.length, words.length],
+        [batchNumber, currentBatchWords.length, words.length],
     );
 
     return (
         <MatchingBatch
-            key={batchStart}
-            words={currentBatch}
+            key={batchNumber}
+            words={currentBatchWords}
             session={session}
             onAnswer={handleBatchAnswer}
         />
