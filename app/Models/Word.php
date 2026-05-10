@@ -13,6 +13,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Word extends Model {
     use HasFactory;
 
+    protected $appends = ['public_tts_url'];
+
+    protected $hidden = ['tts_url'];
+
     protected function publicTtsUrl(): Attribute {
         return Attribute::make(
             get: function () {

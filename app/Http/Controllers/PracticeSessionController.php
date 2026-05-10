@@ -56,7 +56,7 @@ class PracticeSessionController extends Controller {
             $words = match ($practiceSession->exercise_structure) {
                 ExerciseStructure::Word => (function () use ($practiceSession) {
                     return $practiceSession->practiceSet?->words()
-                        ->select('words.id', 'text', 'pinyin', 'translation')
+                        ->select('words.id', 'text', 'pinyin', 'translation', 'tts_url')
                         ->get()
                         ->shuffle()
                         ->values() ?? collect();

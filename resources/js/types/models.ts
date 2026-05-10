@@ -7,17 +7,20 @@ export interface Word {
   text: string
   pinyin: string
   translation: string | null
-  ttsUrl: string | null
-  isAvailable?: boolean
+  public_tts_url: string | null
+
+  pivot?: {
+    is_available?: boolean
+  }
 }
 
 export interface Section {
   id: number
   title: string
-  sectionNumber: number
-  unitNumber: number
-  wordsCount?: number
-  isUnlocked?: boolean
+  section_number: number
+  unit_number: number
+  word_count?: number
+  is_unlocked?: boolean
   words?: Word[]
 }
 

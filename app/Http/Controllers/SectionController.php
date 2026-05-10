@@ -20,22 +20,11 @@ class SectionController extends Controller {
             ->get()
             ->keyBy('section_id');
 
-        $sections = Section::withCount('words')
+        $sections = Section::query()
+            ->withCount('words')
             ->orderBy('section_number')
             ->orderBy('unit_number')
-            ->get()
-            ->map(function (Section $section) use ($userSectionMap) {
-                $userSection = $userSectionMap->get($section->id);
-
-                return [
-                    'id' => $section->id,
-                    'title' => $section->title,
-                    'sectionNumber' => $section->section_number,
-                    'unitNumber' => $section->unit_number,
-                    'wordsCount' => $section->words_count,
-                    'isUnlocked' => $userSection?->is_unlocked ?? false,
-                ];
-            });
+            ->get();
 
         return Inertia::render('sections/index', [
             'sections' => $sections,
@@ -51,22 +40,19 @@ class SectionController extends Controller {
             ->leftJoin('user_word', fn ($j) => $j->on('words.id', '=', 'user_word.word_id')
                 ->where('user_word.user_id', $user->id))
             ->orderBy('words.text')
-            ->get();
+            ->get()
+            ->keyBy('id');
+
+        $userWords = $user->words()->whereIn('words.id', $words->pluck('id'))->get()->keyBy('id');
+
+        // Map so that we have the pivot is_available value
+        foreach ($userWords as $userWord) {
+            $words[$userWord->id] = $userWord;
+        }
 
         return Inertia::render('sections/show', [
-            'section' => [
-                'id' => $section->id,
-                'title' => $section->title,
-                'sectionNumber' => $section->section_number,
-                'unitNumber' => $section->unit_number,
-            ],
-            'words' => $words->map(fn ($w) => [
-                'text' => $w->text,
-                'pinyin' => $w->pinyin,
-                'translation' => $w->translation,
-                'isAvailable' => (bool) $w->is_available,
-                'ttsUrl' => $w->public_tts_url,
-            ]),
+            'section' => $section,
+            'words' => $words->values(),
         ]);
     }
 

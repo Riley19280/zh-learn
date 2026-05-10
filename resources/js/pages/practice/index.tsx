@@ -117,8 +117,19 @@ export default function PracticeIndex() {
   }>(initialData)
 
   const mySetData = <K extends FormDataKeys<typeof data>>(key: K, value: FormDataValues<typeof data, K>) => {
-    setData(key, value)
-    setInitialData({ ...data, [key]: value })
+    const newData = {
+      ...data,
+      [key]: value,
+    }
+
+    if (key == 'exercise_structure') {
+      if (data.question_form == 'audio') {
+        newData['question_form'] = question_forms[0]?.value
+      }
+    }
+
+    setData(newData)
+    setInitialData(newData)
   }
 
   function deleteSet(id: number) {
@@ -233,7 +244,7 @@ export default function PracticeIndex() {
                       />
                       <RadioGroup
                         label="Question"
-                        options={question_forms}
+                        options={question_forms.filter(q => data.exercise_structure === 'sentence' ? q.value !== 'audio' : true)}
                         value={data.question_form}
                         onChange={v => mySetData('question_form', v)}
                       />

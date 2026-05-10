@@ -37,7 +37,7 @@ export default function SectionsIndex() {
 
   function toggle(section: Section) {
     router.put(sectionUpdate.url(section.id), {
-      is_unlocked: !section.isUnlocked,
+      is_unlocked: !section.is_unlocked,
     })
   }
 
@@ -50,7 +50,7 @@ export default function SectionsIndex() {
             <CardTitle className="flex items-center justify-between">
               Sections
               <span className="text-sm font-normal text-muted-foreground">
-                {sections.filter(s => s.isUnlocked).length}
+                {sections.filter(s => s.is_unlocked).length}
                 {' '}
                 /
                 {sections.length}
@@ -67,17 +67,17 @@ export default function SectionsIndex() {
                   className="flex items-center justify-between rounded-lg px-3 py-2 hover:bg-accent"
                 >
                   <div className="flex items-center gap-3">
-                    {section.isUnlocked
+                    {section.is_unlocked
                       ? <CheckCircle2 className="size-4 shrink-0 text-green-500" />
                       : <div className="size-4 shrink-0" />}
                     <Link
                       href={sectionShow.url(section.id)}
-                      className={section.isUnlocked ? 'text-foreground hover:underline' : 'text-muted-foreground hover:underline'}
+                      className={section.is_unlocked ? 'text-foreground hover:underline' : 'text-muted-foreground hover:underline'}
                     >
                       {section.title}
                     </Link>
                     <span className="text-xs text-muted-foreground">
-                      {section.wordsCount}
+                      {section.word_count}
                       {' '}
                       words
                     </span>
@@ -85,9 +85,9 @@ export default function SectionsIndex() {
                   <button
                     onClick={() => toggle(section)}
                     className="cursor-pointer rounded p-1 hover:bg-background"
-                    title={section.isUnlocked ? 'Lock section' : 'Unlock section'}
+                    title={section.is_unlocked ? 'Lock section' : 'Unlock section'}
                   >
-                    {section.isUnlocked
+                    {section.is_unlocked
                       ? <Unlock className="size-4 text-green-500" />
                       : <Lock className="size-4 text-muted-foreground" />}
                   </button>

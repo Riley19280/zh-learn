@@ -25,12 +25,7 @@ class DashboardController extends Controller {
             'userCharacters' => $stats->userCharacters($user)->map(fn ($c) => [
                 'character' => $c->character,
             ]),
-            'availableWordList' => $stats->availableWords($user)->map(fn ($w) => [
-                'text' => $w->text,
-                'pinyin' => $w->pinyin,
-                'translation' => $w->translation,
-                'ttsUrl' => $w->public_tts_url,
-            ]),
+            'availableWordList' => $stats->availableWords($user),
         ]);
     }
 }

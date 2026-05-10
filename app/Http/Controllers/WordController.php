@@ -15,29 +15,17 @@ class WordController extends Controller {
 
         $words = $user->words()
             ->orderBy('text')
-            ->get()
-            ->map(fn ($w) => [
-                'id' => $w->id,
-                'text' => $w->text,
-                'pinyin' => $w->pinyin,
-                'translation' => $w->translation,
-                'ttsUrl' => $w->public_tts_url,
-                'isAvailable' => (bool) $w->pivot->is_available,
-            ]);
+            ->get();
 
-        $notes = Note::where('user_id', $user->id)
+        $note = Note::query()
+            ->where('user_id', $user->id)
             ->where('notable_type', Word::class)
             ->orderBy('created_at')
-            ->get()
-            ->map(fn ($n) => [
-                'id' => $n->id,
-                'wordId' => $n->notable_id,
-                'content' => $n->content,
-            ]);
+            ->first();
 
         return Inertia::render('words/index', [
             'words' => $words,
-            'notes' => $notes,
+            'note' => $note,
         ]);
     }
 }

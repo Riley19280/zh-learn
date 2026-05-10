@@ -17,19 +17,19 @@ class CharacterController extends Controller {
             ->join('word_characters', fn ($j) => $j->on('words.id', '=', 'word_characters.word_id')
                 ->where('word_characters.character_id', $character->id))
             ->orderBy('words.text')
-            ->get();
+            ->get()
+            ->keyBy('id');
 
         $userWords = $user->words()->whereIn('words.id', $words->pluck('id'))->get()->keyBy('id');
 
+        // Map so that we have the pivot is_available value
+        foreach ($userWords as $userWord) {
+            $words[$userWord->id] = $userWord;
+        }
+
         return Inertia::render('characters/show', [
             'character' => $character->character,
-            'words' => $words->map(fn ($w) => [
-                'text' => $w->text,
-                'pinyin' => $w->pinyin,
-                'translation' => $w->translation,
-                'isAvailable' => $userWords->has($w->id) && $userWords->get($w->id)->pivot->is_available,
-                'ttsUrl' => $w->public_tts_url,
-            ]),
+            'words' => $words->values(),
         ]);
     }
 }

@@ -27,8 +27,8 @@ interface Props {
 export default function CharacterShow() {
   const { character, words } = usePage<Props>().props
 
-  const learned = words.filter(w => w.isAvailable)
-  const unlearned = words.filter(w => !w.isAvailable)
+  const learned = words.filter(w => w.pivot?.is_available)
+  const unlearned = words.filter(w => !w.pivot?.is_available)
 
   return (
     <>

@@ -203,7 +203,7 @@ export default function PracticeSession() {
             {feedbackAttempt && !isMatching && (
               <FeedbackBar
                 attempt={feedbackAttempt}
-                ttsUrl={words.find(w => w.id === feedbackAttempt.word_id)?.ttsUrl}
+                ttsUrl={words.find(w => w.id === feedbackAttempt.word_id)?.public_tts_url}
                 onContinue={handleContinue}
               />
             )}

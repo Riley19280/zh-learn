@@ -12,19 +12,19 @@ export function QuestionDisplay({ word, questionForm }: { word: Word, questionFo
   if (questionForm === 'audio') {
     return (
       <div className="flex justify-center py-6">
-        <AudioButton ttsUrl={word.ttsUrl} />
+        <AudioButton ttsUrl={word.public_tts_url} />
       </div>
     )
   }
 
   const isCharacter = questionForm === 'chinese'
-  const clickable = isCharacter && !!word.ttsUrl
+  const clickable = isCharacter && !!word.public_tts_url
 
   return (
     <div className="flex justify-center py-8">
       <span
         className={`${isCharacter ? 'text-7xl font-bold' : 'text-3xl font-medium'}${clickable ? ' cursor-pointer select-none' : ''}`}
-        onClick={() => clickable && new Audio(word.ttsUrl!).play()}
+        onClick={() => clickable && new Audio(word.public_tts_url!).play()}
       >
         {getQuestionText(word, questionForm)}
       </span>

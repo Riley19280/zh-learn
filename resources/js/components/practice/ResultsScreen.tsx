@@ -47,8 +47,8 @@ export function ResultsScreen({ results }: { results: PracticeAttempt[] }) {
             {wrong.map(r => (
               <div key={r.word_id} className="flex items-center gap-4 px-4 py-3">
                 <span
-                  className={`w-14 shrink-0 text-xl font-bold ${r.word?.ttsUrl ? 'cursor-pointer' : ''}`}
-                  onClick={() => r.word?.ttsUrl && new Audio(r.word.ttsUrl).play()}
+                  className={`w-14 shrink-0 text-xl font-bold ${r.word?.public_tts_url ? 'cursor-pointer' : ''}`}
+                  onClick={() => r.word?.public_tts_url && new Audio(r.word.public_tts_url).play()}
                 >
                   {r.word?.text}
                 </span>

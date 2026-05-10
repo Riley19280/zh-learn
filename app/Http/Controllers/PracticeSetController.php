@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\PracticeSet;
 use App\Models\Section;
 use App\Models\User;
-use App\Models\UserSection;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -76,25 +75,11 @@ class PracticeSetController extends Controller {
         /** @var User $user */
         $user = auth()->user();
 
-        $userSectionMap = UserSection::where('user_id', $user->id)
-            ->get()
-            ->keyBy('section_id');
-
-        return Section::orderBy('section_number')
+        return Section::query()
+            ->orderBy('section_number')
             ->orderBy('unit_number')
-            ->with(['words' => fn ($q) => $q->select('words.id', 'text', 'pinyin', 'translation')->orderBy('text')])
+            ->with(['words' => fn ($q) => $q->orderBy('text')])
             ->get()
-            ->map(fn (Section $section) => [
-                'id' => $section->id,
-                'title' => $section->title,
-                'isUnlocked' => (bool) ($userSectionMap->get($section->id)?->is_unlocked ?? false),
-                'words' => $section->words->map(fn ($w) => [
-                    'id' => $w->id,
-                    'text' => $w->text,
-                    'pinyin' => $w->pinyin,
-                    'translation' => $w->translation,
-                ]),
-            ])
             ->all();
     }
 }

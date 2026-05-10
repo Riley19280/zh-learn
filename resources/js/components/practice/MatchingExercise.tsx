@@ -47,8 +47,8 @@ function MatchingBatch({
 
     const word = words.find(w => w.id === wordId)
 
-    if (word && session.question_form === 'audio' && word.ttsUrl) {
-      new Audio(word.ttsUrl).play()
+    if (word && session.question_form === 'audio' && word.public_tts_url) {
+      new Audio(word.public_tts_url).play()
     }
   }
 
@@ -199,7 +199,10 @@ export function MatchingExercise({
   const handleBatchAnswer = useCallback(
     (attempt: UnsavedPracticeAttempt) => {
       onAnswerRef.current(attempt)
-      answeredInBatchRef.current += 1
+
+      if (attempt.is_correct) {
+        answeredInBatchRef.current += 1
+      }
 
       if (answeredInBatchRef.current >= currentBatchWords.length) {
         answeredInBatchRef.current = 0

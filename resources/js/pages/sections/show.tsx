@@ -28,8 +28,8 @@ interface Props {
 export default function SectionShow() {
   const { section, words } = usePage<Props>().props
 
-  const available = words.filter(w => w.isAvailable)
-  const locked = words.filter(w => !w.isAvailable)
+  const available = words.filter(w => w.pivot?.is_available)
+  const locked = words.filter(w => !w.pivot?.is_available)
 
   return (
     <>

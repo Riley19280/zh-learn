@@ -108,8 +108,8 @@ export default function WordsIndex() {
 
     setSelected(word)
 
-    if (word.ttsUrl) {
-      new Audio(word.ttsUrl).play()
+    if (word.public_tts_url) {
+      new Audio(word.public_tts_url).play()
     }
   }
 
@@ -142,8 +142,8 @@ export default function WordsIndex() {
       <div className="flex h-full flex-1 flex-col gap-4 p-4">
         {/* Selected word display */}
         <div
-          className={`flex flex-col items-center gap-2 py-4 ${selected?.ttsUrl ? 'cursor-pointer' : ''}`}
-          onClick={() => selected?.ttsUrl && new Audio(selected.ttsUrl).play()}
+          className={`flex flex-col items-center gap-2 py-4 ${selected?.public_tts_url ? 'cursor-pointer' : ''}`}
+          onClick={() => selected?.public_tts_url && new Audio(selected.public_tts_url).play()}
         >
           <span className="text-8xl font-bold">{selected?.text ?? '—'}</span>
           <span className="text-lg text-muted-foreground">{selected?.pinyin}</span>
