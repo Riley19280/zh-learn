@@ -3,17 +3,17 @@ import type {
 } from '@/types'
 
 export function getCorrectAnswer(word: Word, answerForm: string): string {
-  if (answerForm === 'character') return word.text
+  if (answerForm === 'chinese') return word.text
   if (answerForm === 'pinyin') return word.pinyin
   return word.translation ?? word.pinyin
 }
 
-export function getQuestionText(word: Word, questionForm: string): string | null {
-  if (questionForm === 'character') return word.text
+export function getQuestionText(word: Word, questionForm: string): string {
+  if (questionForm === 'chinese') return word.text
   if (questionForm === 'pinyin') return word.pinyin
   if (questionForm === 'english') return word.translation ?? word.pinyin
   if (questionForm === 'audio') return '🔊'
-  return null
+  return word.translation ?? word.pinyin
 }
 
 export function stripDiacritics(s: string): string {
