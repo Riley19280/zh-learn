@@ -66,6 +66,7 @@ class PracticeSessionController extends Controller {
 
                     return collect($sentences)
                         ->map(fn ($sentence, $idx) => [
+                            'id' => -($idx + 1),
                             'text' => $sentence['chinese'],
                             'pinyin' => $sentence['pinyin'],
                             'translation' => $sentence['english'],
@@ -97,7 +98,7 @@ class PracticeSessionController extends Controller {
 
                 PracticeAttempt::create([
                     'practice_session_id' => $practiceSession->id,
-                    'word_id' => $data['word_id'],
+                    'word_id' => $practiceSession->exercise_structure === ExerciseStructure::Word ? $data['word_id'] : null,
                     'given_answer' => $data['given_answer'] ?? null,
                     'correct_answer' => $data['correct_answer'],
                     'is_correct' => $isCorrect,
