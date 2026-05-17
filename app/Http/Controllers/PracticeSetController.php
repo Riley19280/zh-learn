@@ -7,6 +7,7 @@ use App\Models\Section;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -54,13 +55,22 @@ class PracticeSetController extends Controller {
     }
 
     public function edit(PracticeSet $practiceSet): Response {
+        $sections = Section::query()
+            ->withCount('words')
+            ->orderBy('section_number')
+            ->orderBy('unit_number')
+            ->get()
+            ->keyBy('id')
+            ->merge(Auth::user()->sections->keyBy('id'))
+            ->load('words');
+
         return Inertia::render('practice/sets/form', [
             'practiceSet' => [
                 'id' => $practiceSet->id,
                 'name' => $practiceSet->name,
                 'wordIds' => $practiceSet->words()->pluck('words.id'),
             ],
-            'sections' => $this->sectionsWithWords(),
+            'sections' => $sections,
         ]);
     }
 

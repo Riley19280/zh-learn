@@ -43,19 +43,25 @@ class WordTest extends TestCase {
 
         $this->actingAs($user)->get(route('words.index'))
             ->assertInertia(fn ($page) => $page
-                ->where('words.0.isAvailable', true)
-                ->where('words.1.isAvailable', false)
+                ->where('words.0.pivot.is_available', true)
+                ->where('words.1.pivot.is_available', false)
             );
     }
 
     public function test_words_index_excludes_other_users_words(): void {
         $user = User::factory()->create();
         $other = User::factory()->create();
-        $word = Word::factory()->create();
-        $other->words()->attach($word->id, ['is_available' => true]);
+        $userWord = Word::factory()->create(['text' => 'aaa']);
+        $otherWord = Word::factory()->create(['text' => 'bbb']);
+        $user->words()->attach($userWord->id, ['is_available' => true]);
+        $other->words()->attach($otherWord->id, ['is_available' => true]);
 
         $this->actingAs($user)->get(route('words.index'))
-            ->assertInertia(fn ($page) => $page->count('words', 0));
+            ->assertInertia(fn ($page) => $page
+                ->count('words', 2)
+                ->where('words.0.pivot.is_available', true)
+                ->missing('words.1.pivot')
+            );
     }
 
     // --- Notes ---

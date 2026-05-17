@@ -36,7 +36,7 @@ class SectionTest extends TestCase {
         $response->assertInertia(fn ($page) => $page
             ->component('sections/index')
             ->where('sections', fn ($sections) => collect($sections)->contains(
-                fn ($s) => $s['id'] === $section->id && $s['isUnlocked'] === true
+                fn ($s) => $s['id'] === $section->id && $s['pivot']['is_unlocked'] === true
             ))
         );
     }
@@ -50,7 +50,7 @@ class SectionTest extends TestCase {
         $response->assertOk();
         $response->assertInertia(fn ($page) => $page
             ->where('sections', fn ($sections) => collect($sections)->contains(
-                fn ($s) => $s['id'] === $section->id && $s['isUnlocked'] === false
+                fn ($s) => $s['id'] === $section->id && !$section->pivot
             ))
         );
     }
@@ -71,7 +71,7 @@ class SectionTest extends TestCase {
         $response->assertInertia(fn ($page) => $page
             ->component('sections/show')
             ->where('words.0.text', $word->text)
-            ->where('words.0.isAvailable', true)
+            ->where('words.0.pivot.is_available', true)
         );
     }
 
