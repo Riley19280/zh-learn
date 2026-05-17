@@ -13,19 +13,21 @@ class WordController extends Controller {
         /** @var User $user */
         $user = auth()->user();
 
-        $words = $user->words()
+        $words = Word::query()
             ->orderBy('text')
-            ->get();
+            ->get()
+            ->keyBy('id')
+            ->merge($user->words->keyBy('id'));
 
-        $note = Note::query()
+        $notes = Note::query()
             ->where('user_id', $user->id)
             ->where('notable_type', Word::class)
             ->orderBy('created_at')
-            ->first();
+            ->get();
 
         return Inertia::render('words/index', [
             'words' => $words,
-            'note' => $note,
+            'notes' => $notes,
         ]);
     }
 }

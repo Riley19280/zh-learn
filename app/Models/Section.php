@@ -17,7 +17,7 @@ class Section extends Model {
     }
 
     public function users(): BelongsToMany {
-        return $this->belongsToMany(User::class)->using(UserSection::class)->withPivot('is_unlocked')->withTimestamps();
+        return $this->belongsToMany(User::class, 'user_section')->using(UserSection::class)->withPivot('is_unlocked')->withTimestamps();
     }
 
     public function userSections(): HasMany {

@@ -33,16 +33,9 @@ import {
   store as storeNote,
 } from '@/routes/words/notes'
 import type {
-  Word as BaseWord,
+  Word,
+  Note,
 } from '@/types'
-
-type Word = BaseWord & { isAvailable: boolean }
-
-interface Note {
-  id: number
-  wordId: number
-  content: string
-}
 
 interface Props {
   words: Word[]
@@ -70,7 +63,7 @@ export default function WordsIndex() {
     const q = search.trim().toLowerCase()
 
     return words.filter((w) => {
-      if (unlockedOnly && !w.isAvailable) return false
+      if (unlockedOnly && !w.pivot?.is_available) return false
       if (!q) return true
 
       return (
@@ -170,7 +163,7 @@ export default function WordsIndex() {
                 <Input
                   value={search}
                   onChange={e => setSearch(e.target.value)}
-                  placeholder={`Search ${words.length} words…`}
+                  placeholder={`Search ${filtered.length} words…`}
                   className="pl-9"
                 />
               </div>

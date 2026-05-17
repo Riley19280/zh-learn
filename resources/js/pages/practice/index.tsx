@@ -114,7 +114,7 @@ export default function PracticeIndex() {
     exercise_type: string
     question_form: string
     answer_form: string
-  }>(initialData)
+  }>({ ...initialData, practice_set_id: initialData.practice_set_id ?? sets[0]?.id })
 
   const mySetData = <K extends FormDataKeys<typeof data>>(key: K, value: FormDataValues<typeof data, K>) => {
     const newData = {

@@ -40,13 +40,8 @@ import type {
   Word,
 } from '@/types'
 
-interface FormSection extends Section {
-  words: Word[]
-  isUnlocked: boolean
-}
-
 interface Props {
-  sections: FormSection[]
+  sections: Section[]
   practiceSet?: PracticeSet
   [key: string]: unknown
 }
@@ -65,7 +60,7 @@ export default function PracticeSetForm() {
   const allWordsById = useMemo(() => {
     const map = new Map<number, Word>()
     for (const section of sections) {
-      for (const word of section.words) {
+      for (const word of section?.words ?? []) {
         map.set(word.id, word)
       }
     }
@@ -73,12 +68,12 @@ export default function PracticeSetForm() {
   }, [sections])
 
   const visibleSections = useMemo(
-    () => (showLocked ? sections : sections.filter(s => s.isUnlocked)),
+    () => (showLocked ? sections : sections.filter(s => s.pivot?.is_unlocked)),
     [sections, showLocked],
   )
 
   const sectionWordIds = useMemo(
-    () => new Map(sections.map(s => [s.id, s.words.map(w => w.id)])),
+    () => new Map(sections.map(s => [s.id, (s.words ?? []).map(w => w.id)])),
     [sections],
   )
 
@@ -247,7 +242,7 @@ export default function PracticeSetForm() {
                             onClick={() => toggleSection(section.id)}
                             className={`flex w-full cursor-pointer items-center gap-3 px-6 py-2.5 text-left transition-colors hover:bg-accent ${state === 'all' ? 'bg-primary/10' : state === 'partial' ? 'bg-accent/60' : ''}`}
                           >
-                            {section.isUnlocked
+                            {section.pivot?.is_unlocked
                               ? (
                                   <LockOpen className="size-4 shrink-0 text-green-600" />
                                 )

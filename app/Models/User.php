@@ -28,7 +28,7 @@ class User extends Authenticatable {
     }
 
     public function sections(): BelongsToMany {
-        return $this->belongsToMany(Section::class)->using(UserSection::class)->withPivot('is_unlocked')->withTimestamps();
+        return $this->belongsToMany(Section::class, 'user_section')->using(UserSection::class)->withPivot('is_unlocked')->withTimestamps();
     }
 
     protected function casts(): array {

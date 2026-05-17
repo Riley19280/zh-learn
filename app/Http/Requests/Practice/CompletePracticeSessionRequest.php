@@ -4,7 +4,6 @@ namespace App\Http\Requests\Practice;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class CompletePracticeSessionRequest extends FormRequest {
     /**
@@ -22,7 +21,7 @@ class CompletePracticeSessionRequest extends FormRequest {
     public function rules(): array {
         return [
             'attempts' => ['required', 'array', 'min:1'],
-            'attempts.*.word_id' => ['nullable', 'integer', Rule::exists('words', 'id')],
+            'attempts.*.word_id' => ['nullable', 'integer'],
             'attempts.*.given_answer' => ['nullable', 'string', 'max:1000'],
             'attempts.*.correct_answer' => ['nullable', 'string', 'max:1000'],
             'attempts.*.is_correct' => ['required', 'boolean'],

@@ -3,18 +3,15 @@ import {
 } from '@/routes/practice'
 import {
   PracticeAttempt,
+  PracticeSession,
 } from '@/types'
 
-export function ResultsScreen({ results }: { results: PracticeAttempt[] }) {
-  const wordIds = [...new Set(results.map(x => x.word_id))]
-  const total = wordIds.length
-  const correct = wordIds.filter(id => !results.some(r => r.word_id === id && !r.is_correct)).length
+export function ResultsScreen({ session: _session, results }: { session: PracticeSession, results: PracticeAttempt[] }) {
+  const total = results.length
+  const correct = results.filter(r => r.is_correct).length
   const pct = total > 0 ? Math.round((correct / total) * 100) : 0
 
-  // One entry per word that had at least one incorrect attempt
-  const wrong = wordIds
-    .filter(id => results.some(r => r.word_id === id && !r.is_correct))
-    .map(id => results.find(r => r.word_id === id)!)
+  const wrong = results.filter(r => !r.is_correct)
 
   const scoreColor
     = pct >= 80

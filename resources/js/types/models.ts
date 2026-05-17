@@ -20,8 +20,11 @@ export interface Section {
   section_number: number
   unit_number: number
   word_count?: number
-  is_unlocked?: boolean
   words?: Word[]
+
+  pivot?: {
+    is_unlocked: boolean
+  }
 }
 
 export interface PracticeSet {
@@ -57,6 +60,12 @@ export interface PracticeAttempt {
   feedback: string | null
 
   word?: Word
+}
+
+export interface Note {
+  id: number
+  wordId: number
+  content: string
 }
 
 export type UnsavedPracticeAttempt = Omit<PracticeAttempt, 'id' | 'practice_session_id'>

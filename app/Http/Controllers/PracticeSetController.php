@@ -16,8 +16,20 @@ class PracticeSetController extends Controller {
     }
 
     public function create(): Response {
+        /** @var User $user */
+        $user = auth()->user();
+
+        $sections = Section::query()
+            ->withCount('words')
+            ->orderBy('section_number')
+            ->orderBy('unit_number')
+            ->get()
+            ->keyBy('id')
+            ->merge($user->sections->keyBy('id'))
+            ->load('words');
+
         return Inertia::render('practice/sets/form', [
-            'sections' => $this->sectionsWithWords(),
+            'sections' => $sections,
         ]);
     }
 
@@ -69,17 +81,5 @@ class PracticeSetController extends Controller {
         $practiceSet->delete();
 
         return redirect()->route('practice.index');
-    }
-
-    private function sectionsWithWords(): array {
-        /** @var User $user */
-        $user = auth()->user();
-
-        return Section::query()
-            ->orderBy('section_number')
-            ->orderBy('unit_number')
-            ->with(['words' => fn ($q) => $q->orderBy('text')])
-            ->get()
-            ->all();
     }
 }

@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Section;
 use App\Models\User;
-use App\Models\UserSection;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -16,15 +15,13 @@ class SectionController extends Controller {
         /** @var User $user */
         $user = auth()->user();
 
-        $userSectionMap = UserSection::where('user_id', $user->id)
-            ->get()
-            ->keyBy('section_id');
-
         $sections = Section::query()
             ->withCount('words')
             ->orderBy('section_number')
             ->orderBy('unit_number')
-            ->get();
+            ->get()
+            ->keyBy('id')
+            ->merge($user->sections->keyBy('id'));
 
         return Inertia::render('sections/index', [
             'sections' => $sections,
@@ -43,12 +40,7 @@ class SectionController extends Controller {
             ->get()
             ->keyBy('id');
 
-        $userWords = $user->words()->whereIn('words.id', $words->pluck('id'))->get()->keyBy('id');
-
-        // Map so that we have the pivot is_available value
-        foreach ($userWords as $userWord) {
-            $words[$userWord->id] = $userWord;
-        }
+        $words = $words->merge($user->words()->whereIn('words.id', $words->pluck('id'))->get()->keyBy('id'));
 
         return Inertia::render('sections/show', [
             'section' => $section,
