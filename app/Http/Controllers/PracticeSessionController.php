@@ -17,6 +17,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\RateLimiter;
 use Inertia\Inertia;
 use Inertia\Response;
 use Normalizer;
@@ -43,7 +44,7 @@ class PracticeSessionController extends Controller {
         return redirect()->route('practice.sessions.show', $session);
     }
 
-    public function show(PracticeSession $practiceSession): Response {
+    public function show(PracticeSession $practiceSession): Response|RedirectResponse {
         $words = [];
         $results = null;
 
@@ -53,26 +54,39 @@ class PracticeSessionController extends Controller {
                 ->orderBy('id')
                 ->get();
         } else {
-            $words = match ($practiceSession->exercise_structure) {
-                ExerciseStructure::Word => (function () use ($practiceSession) {
-                    return $practiceSession->practiceSet?->words()
-                        ->select('words.id', 'text', 'pinyin', 'translation', 'tts_url')
-                        ->get()
-                        ->shuffle()
-                        ->values() ?? collect();
-                })(),
-                ExerciseStructure::Sentence => (function () {
-                    $sentences = (new SentenceGenerator())->prompt('go')['sentences'];
 
-                    return collect($sentences)
-                        ->map(fn ($sentence, $idx) => [
-                            'id' => -($idx + 1),
-                            'text' => $sentence['chinese'],
-                            'pinyin' => $sentence['pinyin'],
-                            'translation' => $sentence['english'],
-                        ]);
-                })()
-            };
+            if ($practiceSession->exercise_structure == ExerciseStructure::Sentence) {
+                $sentences = null;
+
+                $executed = RateLimiter::attempt(
+                    'sentence-generator:' . Auth::id(),
+                    10,
+                    function () use (&$sentences) {
+                        $sentences = (new SentenceGenerator())->prompt('go')['sentences'];
+                    },
+                    60 * 60 * 24
+                );
+
+                if (!$executed) {
+                    return redirect()->route('practice.index')->withErrors([
+                        'rate_limit' => 'You have exceeded the maximum number of sentences generated. Your limit will reset tomorrow.',
+                    ]);
+                }
+
+                $words = collect($sentences)
+                    ->map(fn ($sentence, $idx) => [
+                        'id' => -($idx + 1),
+                        'text' => $sentence['chinese'],
+                        'pinyin' => $sentence['pinyin'],
+                        'translation' => $sentence['english'],
+                    ]);
+            } else {
+                $words = $practiceSession->practiceSet?->words()
+                    ->select('words.id', 'text', 'pinyin', 'translation', 'tts_url')
+                    ->get()
+                    ->shuffle()
+                    ->values() ?? collect();
+            }
         }
 
         return Inertia::render('practice/session', [
